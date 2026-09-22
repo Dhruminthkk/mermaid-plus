@@ -1,0 +1,13 @@
+import { chromium } from '@playwright/test'
+const browser = await chromium.launch()
+const page = await browser.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 })
+await page.goto('http://localhost:5173/?d=architecture&theme=clean-dark')
+await page.waitForSelector('[data-mp-ready="true"]', { timeout: 30000 })
+await page.waitForSelector('.monaco-editor', { timeout: 20000 })
+await page.keyboard.press('ControlOrMeta+k')
+await page.waitForSelector('.mp-palette')
+await page.locator('.mp-palette input').fill('order')
+await page.waitForTimeout(250)
+await page.screenshot({ path: process.argv[2] })
+console.log('saved')
+await browser.close()

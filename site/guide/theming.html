@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theming — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html" aria-current="page">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 6</p>
+    <h1>Theming</h1>
+    <p class="standfirst">
+      A diagram going into a customer deck should not look like a diagram going
+      into a runbook. Twenty themes, and the tokens underneath if none of them is
+      yours.
+    </p>
+
+    <figure>
+      <img src="images/themes.png" alt="The theme picker showing preview cards, each drawn as a miniature diagram" width="1280" height="780" loading="lazy">
+      <figcaption>Each card is a small real diagram — grouped nodes, routed edges — not a row of colour chips.</figcaption>
+    </figure>
+
+    <h2>The families</h2>
+    <div class="wide"><table>
+      <thead><tr><th>Family</th><th>For</th></tr></thead>
+      <tbody>
+        <tr><td>Clean</td><td>The default. Reads well in a document</td></tr>
+        <tr><td>Slate</td><td>Cooler and quieter. Good for dense systems</td></tr>
+        <tr><td>Blueprint</td><td>Technical drawing. Flat, one accent</td></tr>
+        <tr><td>Notebook</td><td>Hand-drawn texture, for something deliberately provisional</td></tr>
+        <tr><td>Vivid</td><td>High saturation. Slides and screens</td></tr>
+        <tr><td>Contrast</td><td>WCAG AA throughout</td></tr>
+        <tr><td>Paper</td><td>Warm and printed</td></tr>
+        <tr><td>Mono</td><td>Monochrome, for print and photocopies</td></tr>
+        <tr><td>Terminal</td><td>Phosphor on black</td></tr>
+        <tr><td>Ocean</td><td>Curved edges, cool blues and teals</td></tr>
+      </tbody>
+    </table></div>
+    <p>Each comes in light and dark, so the ids are <code>clean-light</code>, <code>clean-dark</code>, <code>slate-light</code> and so on.</p>
+
+    <h2>Pin one to a document</h2>
+    <p>A theme in the source overrides whatever the reader has selected, which is what you want for a diagram going into a report.</p>
+<pre>%%mp: theme slate-dark</pre>
+
+    <h2>Edit the tokens</h2>
+    <p>
+      The <em>Customise</em> tab opens the theme underneath: surfaces, the accent
+      ramp, a fill, stroke and text colour per archetype, corner radius, stroke
+      width, padding, spacing, type, routing and arrowheads.
+    </p>
+    <figure>
+      <img src="images/customise.png" alt="The theme customiser showing colour swatches, sliders and segmented controls" width="1280" height="780" loading="lazy">
+      <figcaption>The archetype columns are labelled fill, line and text — the three colours each shape uses.</figcaption>
+    </figure>
+
+    <p><em>Export</em> writes the whole theme out as JSON, and <em>Import</em> reads it back. That is how you keep a company theme in a repository and hand it round.</p>
+
+    <div class="note">
+      <p><strong>Light and dark are not inversions of each other.</strong> Each is tuned separately, which is why the picker shows twenty cards rather than ten with a switch.</p>
+    </div>
+
+    <nav class="next">
+      <a class="back" href="presenting.html"><span>Back to</span><b>Presenting</b></a>
+      <a href="exporting.html"><span>Next</span><b>Exporting</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

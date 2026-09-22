@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shapes and icons — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html" aria-current="page">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 2</p>
+    <h1>Shapes and icons</h1>
+    <p class="standfirst">
+      You did not draw any of this, and you did not annotate it either. A node
+      called <code>PostgreSQL</code> becomes a database cylinder wearing the
+      Postgres mark, purely because of what you called it.
+    </p>
+
+    <figure>
+      <img src="images/archetypes.png" alt="A diagram whose nodes carry inferred shapes, colours and vendor marks" width="1280" height="780" loading="lazy">
+      <figcaption>Nothing in this diagram was annotated by hand except the note.</figcaption>
+    </figure>
+
+    <h2>One idea: the archetype</h2>
+    <p>
+      Every node is assigned an <strong>archetype</strong> — one of
+      <code>service</code>, <code>database</code>, <code>queue</code>,
+      <code>storage</code>, <code>user</code>, <code>external</code>,
+      <code>process</code>, <code>decision</code>, <code>note</code> or
+      <code>default</code>.
+    </p>
+    <p>
+      That one value decides the shape, the fill, the stroke, the text colour,
+      whether the border is dashed, and which glyph appears. Everything else on
+      this page is about how that value gets chosen.
+    </p>
+
+    <h2>How it is chosen</h2>
+    <p>Four rules, in order. The first one that answers wins.</p>
+
+    <ol class="steps">
+      <li>
+        <h3>Your directive</h3>
+        <p>If you said so, that is the answer.</p>
+<pre>%%mp: node api <i>archetype</i>=service</pre>
+      </li>
+      <li>
+        <h3>The Mermaid shape you typed, if it means something</h3>
+        <p>Only four shapes carry unambiguous meaning:</p>
+        <div class="wide"><table>
+          <thead><tr><th>You write</th><th>Shape</th><th>Archetype</th></tr></thead>
+          <tbody>
+            <tr><td><code>db[(Orders)]</code></td><td>cylinder</td><td>database</td></tr>
+            <tr><td><code>q{{Events}}</code></td><td>hexagon</td><td>queue</td></tr>
+            <tr><td><code>ok{Valid?}</code></td><td>diamond</td><td>decision</td></tr>
+            <tr><td><code>n&gt;Remember]</code></td><td>odd</td><td>note</td></tr>
+          </tbody>
+        </table></div>
+        <p>Stadiums, circles and the rest are geometry, not meaning, so they decide nothing.</p>
+      </li>
+      <li>
+        <h3>Whole words in the label</h3>
+        <p>The label is split into words and checked against six lists, in this order. First list with a hit wins.</p>
+        <div class="wide"><table>
+          <thead><tr><th>Archetype</th><th>Words</th></tr></thead>
+          <tbody>
+            <tr><td>database</td><td>db, database, postgres, postgresql, mysql, mongo, mongodb, redis, cache, dynamodb, sqlite, rds</td></tr>
+            <tr><td>queue</td><td>queue, kafka, sqs, rabbitmq, topic, stream, pubsub, broker</td></tr>
+            <tr><td>storage</td><td>s3, bucket, blob, storage, filesystem, cdn</td></tr>
+            <tr><td>user</td><td>user, client, browser, customer, actor, person</td></tr>
+            <tr><td>external</td><td>external, third-party, vendor, stripe, twilio, github</td></tr>
+            <tr><td>service</td><td>service, api, server, worker, lambda, gateway, handler, microservice, daemon, job</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>Whole words, never substrings.</strong> "Passport service" is not a database because of <em>pass</em>. "Order Service" is a service because the word <em>service</em> is actually there.</p>
+      </li>
+      <li>
+        <h3>Otherwise, default</h3>
+        <p>A plain box with your bracket shape, if you gave one.</p>
+      </li>
+    </ol>
+
+    <h2>Where the dotted box comes from</h2>
+    <p>
+      Not from a shape you typed — from the archetype. <code>external</code> is
+      drawn with a dashed border, so writing
+      <code>email[Email Provider external]</code> is enough. The same mechanism
+      gives <code>storage</code> its band and every archetype its colours.
+    </p>
+    <div class="note">
+      <p><strong>The archetype beats the brackets.</strong> Write <code>pg[PostgreSQL]</code> with plain square brackets and you still get a cylinder, because the archetype decides the geometry and only falls back to your bracket shape for <code>default</code> and <code>process</code>.</p>
+    </div>
+
+    <h2>Icons are a separate pass</h2>
+    <p>
+      Roughly ninety real technologies are recognised by name — Postgres, Kafka,
+      Cloudflare, Kubernetes, Stripe, Datadog — and matched the same way, on
+      whole words. The order is:
+    </p>
+<pre>your directive → the technology named in the label → the archetype's own glyph</pre>
+    <p>
+      So <code>pg[(PostgreSQL)]</code> gets the Postgres elephant and
+      <code>db[(Orders DB)]</code> gets the generic database glyph. Both are
+      cylinders.
+    </p>
+
+    <h3>Two details worth knowing</h3>
+    <ul>
+      <li><strong>Adjacent words are joined,</strong> so <code>Next.js</code> splits to <em>next</em> and <em>js</em> and rejoins as <em>nextjs</em>. That is how punctuated product names survive.</li>
+      <li><strong>AWS marks need the word AWS.</strong> <code>[Lambda]</code> in a diagram about your own scheduler stays generic; <code>[AWS Lambda]</code> gets the branded mark. Otherwise every step called "Lambda" would silently pick up AWS branding.</li>
+    </ul>
+
+    <h2>Where it deliberately does not guess</h2>
+    <p>Two cases skip inference entirely, because a name there is an identifier and not a description:</p>
+    <ul>
+      <li><strong>Class and ER diagrams.</strong> A class called <code>Payment</code> is not a queue. A table called <code>CUSTOMER</code> is not a person.</li>
+      <li><strong>State, C4 and other adapters</strong> that already assign meaning of their own.</li>
+    </ul>
+    <p>
+      There is also a list of words left out of the icon matcher on purpose —
+      <em>next</em>, <em>node</em>, <em>segment</em>, <em>linear</em>,
+      <em>actions</em> — because they are ordinary English before they are
+      products, and they misfired on kanban columns and flowchart steps.
+    </p>
+
+    <h2>Overruling it</h2>
+<pre>%%mp: node api <i>archetype</i>=service <i>icon</i>=aws:lambda
+%%mp: node step <i>archetype</i>=process   <em># stop the guess</em>
+%%mp: node db <i>icon</i>=none             <em># keep the cylinder, drop the glyph</em></pre>
+    <p>
+      Icon references are <code>general:</code>, <code>tech:</code>,
+      <code>aws:</code>, <code>gcp:</code>, <code>azure:</code> or
+      <code>k8s:</code> followed by a name — or <code>none</code>.
+    </p>
+
+    <h2>Seeing what it decided</h2>
+    <p>The <em>Legend</em> button builds a key from the shapes this diagram actually uses, so a reader is never guessing what a colour means.</p>
+    <figure>
+      <img src="images/legend.png" alt="A legend panel listing the shapes used in the current diagram" width="1280" height="780" loading="lazy">
+      <figcaption>The legend is built from the diagram in front of you, not a fixed list.</figcaption>
+    </figure>
+
+    <nav class="next">
+      <a class="back" href="getting-started.html"><span>Back to</span><b>Getting started</b></a>
+      <a href="large-systems.html"><span>Next</span><b>Large systems</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

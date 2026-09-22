@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mermaid Plus — demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>/* "This was right in March." — an advertisement in three acts.
+   Act one is a wiki page: flat, light, dead. Act two is the turn. Act three is
+   the product, and the film gets its colour back when it arrives. */
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --accent: #38cfe0;
+}
+/* Act one: somebody's wiki, printed out. */
+.deck[data-act="wiki"] {
+  --ground: #e9e9e6; --panel: #f5f5f3; --ink: #1c1e22; --muted: #5c6068;
+  --faint: #8b9099; --line: #d3d4d0; --accent: #1c1e22;
+}
+/* Act two and three: the product. */
+.deck[data-act="turn"], .deck[data-act="alive"] {
+  --ground: #06080d; --panel: #090c14; --ink: #eef1f7; --muted: #98a1b7;
+  --faint: #5f6880; --line: #1a2130; --accent: #38cfe0;
+}
+
+html, body { height: 100%; }
+body { margin: 0; background: #000; font-family: var(--sans); overflow: hidden; }
+.fit { position: absolute; overflow: hidden; }
+
+.deck {
+  position: absolute; inset: 0; display: grid;
+  background: var(--ground); color: var(--ink);
+  transition: background 1.1s ease, color 1.1s ease,
+    grid-template-columns .7s cubic-bezier(.4,0,.2,1), grid-template-rows .7s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── The picture ────────────────────────────────────────────────────────── */
+.panel {
+  position: relative; overflow: hidden; min-width: 0; min-height: 0;
+  background: var(--panel); border: 1px solid var(--line);
+  transition: background 1.1s ease, border-color 1.1s ease, opacity .6s ease;
+}
+.deck[data-layout="card"] .panel, .deck[data-layout="end"] .panel { border-color: transparent; }
+.deck[data-layout="end"] .panel { opacity: 0; }
+
+#camera {
+  position: absolute; inset: 0;
+  transform: scale(var(--s, 1)) translate(var(--x, 0%), var(--y, 0%));
+  transition: transform var(--cam-ms, 4000ms) cubic-bezier(.33, 0, .2, 1);
+  will-change: transform;
+}
+/* A block, not a centred grid item: `place-items: center` stops the item being
+   stretched, so height:100% resolved to auto and the picture grew past the
+   bottom of the panel. The image is positioned to the box and letterboxes
+   itself. */
+.sheet { position: absolute; inset: 6%; opacity: 0; transition: opacity .8s ease; }
+/* Clear of the corner stamp, which is part of the picture's story and should
+   not be sitting on top of a box in it. */
+.deck[data-act="wiki"] .sheet { inset: 5% 5% 13% 5%; }
+.sheet.in { opacity: 1; }
+.sheet.out { opacity: 0; }
+.sheet svg { width: 100%; height: 100%; display: block; }
+/* The wiki picture is a raster on purpose. max-width does not scale a small
+   image up, so it sat tiny in the middle of the frame; it fills the frame and
+   goes soft doing it, which is the point being made. */
+.sheet img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+
+.glow {
+  position: absolute; inset: -25%; pointer-events: none; opacity: 0;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%);
+  transition: opacity 1.2s ease; animation: drift 26s ease-in-out infinite alternate;
+}
+.deck[data-act="alive"] .glow { opacity: .6; }
+@keyframes drift { from { transform: translate(-7%, -5%) scale(1); } to { transform: translate(8%, 6%) scale(1.2); } }
+.vignette {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(ellipse at center, transparent 46%, #000 120%);
+  transition: opacity 1.2s ease;
+}
+.deck[data-act="alive"] .vignette, .deck[data-act="turn"] .vignette { opacity: .68; }
+.scrim { position: absolute; inset: 0; pointer-events: none; background: var(--ground); opacity: 0; transition: opacity .7s ease; }
+.scrim.on { opacity: var(--dim, .74); }
+
+/* The corner stamp: the detail that makes it somebody's actual wiki. */
+.stamp {
+  position: absolute; right: 0; bottom: 0; opacity: 0;
+  font-family: var(--mono); color: var(--faint);
+  border-top: 1px solid var(--line); border-left: 1px solid var(--line);
+  background: var(--panel); transition: opacity .6s ease;
+}
+.deck[data-act="wiki"] .stamp { opacity: 1; }
+
+/* ── The diagram inking itself in ───────────────────────────────────────── */
+.sheet.draw .mp-edge-path { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: ink 1.2s cubic-bezier(.4,0,.2,1) .35s forwards; }
+@keyframes ink { to { stroke-dashoffset: 0; } }
+.sheet.draw .mp-diagram .mp-node { opacity: 0; animation: pop .55s cubic-bezier(.2,.9,.3,1) forwards; }
+@keyframes pop { from { opacity: 0; } to { opacity: 1; } }
+.sheet.draw .mp-diagram .mp-nodes .mp-node:nth-child(1) { animation-delay: .1s }
+.sheet.draw .mp-diagram .mp-nodes .mp-node:nth-child(2) { animation-delay: .22s }
+.sheet.draw .mp-diagram .mp-nodes .mp-node:nth-child(3) { animation-delay: .34s }
+.sheet.draw .mp-diagram .mp-nodes .mp-node:nth-child(4) { animation-delay: .46s }
+.sheet.draw .mp-diagram .mp-nodes .mp-node:nth-child(5) { animation-delay: .58s }
+.sheet.draw .mp-diagram .mp-nodes .mp-node:nth-child(n+6) { animation-delay: .7s }
+
+/* ── Copy ───────────────────────────────────────────────────────────────── */
+.copy { display: flex; flex-direction: column; min-width: 0; min-height: 0; justify-content: flex-start; }
+.deck[data-layout="card"] .copy { z-index: 3; align-items: center; justify-content: center; text-align: center; }
+.deck[data-layout="end"] .copy { opacity: 0; }
+.line { display: block; overflow: hidden; }
+.line > span {
+  display: block; font-family: var(--mono); font-weight: 600; letter-spacing: -.04em;
+  transform: translateY(112%); opacity: 0; animation: land .8s cubic-bezier(.16,1,.3,1) forwards;
+}
+.line.out > span { animation: leave .4s cubic-bezier(.6,0,.8,.2) forwards; }
+@keyframes land { to { transform: none; opacity: 1; } }
+@keyframes leave { to { transform: translateY(-104%); opacity: 0; } }
+.line em { font-style: normal; color: var(--accent); }
+.sub { font-family: var(--sans); font-weight: 400; color: var(--muted); opacity: 0; animation: fade .7s ease .35s forwards; }
+@keyframes fade { to { opacity: 1; } }
+
+/* ── The source, and the two edits that fix it ──────────────────────────── */
+#card {
+  position: absolute; inset: 0; display: grid; place-content: center start;
+  opacity: 0; transition: opacity .7s ease; pointer-events: none;
+}
+#card.on { opacity: 1; }
+#code { margin: 0; font-family: var(--mono); color: var(--muted); }
+#code .cl { display: block; transition: opacity .5s ease, max-height .55s ease, color .4s ease; max-height: 3em; }
+#code .cl b { color: var(--ink); font-weight: 400; }
+#code .cl.cut { color: #ff6b6b; text-decoration: line-through; text-decoration-thickness: 2px; }
+#code .cl.gone { opacity: 0; max-height: 0; }
+#code .ed { color: var(--accent); }
+
+/* ── Callout ────────────────────────────────────────────────────────────── */
+#callout {
+  position: absolute; display: flex; align-items: center; gap: 10px; z-index: 4;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .5s ease, transform .55s cubic-bezier(.2,.9,.3,1); pointer-events: none;
+}
+#callout.on { opacity: 1; transform: none; }
+#callout .dot { width: 9px; height: 9px; border-radius: 50%; background: #d64545; flex: none; box-shadow: 0 0 0 5px #d6454533; }
+#callout .rule { height: 1px; background: #d64545; opacity: .6; }
+#callout .text { font-family: var(--mono); color: #b23b3b; white-space: nowrap; background: var(--panel); border: 1px solid var(--line); border-radius: 5px; }
+
+/* ── Brand and end ──────────────────────────────────────────────────────── */
+.mark { display: flex; align-items: baseline; gap: 9px; opacity: 0; transition: opacity .9s ease; }
+.deck[data-act="alive"] .mark { opacity: .55; }
+.mark b { font-family: var(--mono); font-weight: 600; letter-spacing: -.025em; color: var(--ink); }
+.mark b i { font-style: normal; color: var(--accent); }
+.mark span { font-family: var(--mono); color: var(--faint); }
+.deck[data-layout="end"] .mark { opacity: 0; }
+
+.end {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center;
+  gap: 16px; text-align: center; opacity: 0; pointer-events: none; z-index: 5;
+  background: var(--ground); transition: opacity .8s ease;
+}
+.deck[data-layout="end"] .end { opacity: 1; }
+.end .word { font-family: var(--mono); font-weight: 600; letter-spacing: -.045em; color: var(--ink); }
+.end .word i { font-style: normal; color: var(--accent); }
+.end p { margin: 0; color: var(--muted); }
+.end .fine { font-family: var(--mono); color: var(--faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .glow, .line > span, .sub { animation: none !important; }
+  .line > span { transform: none; opacity: 1; }
+  .sub { opacity: 1; }
+  #camera, .sheet, #card, #callout, .deck { transition: none !important; }
+  .sheet.draw .mp-edge-path, .sheet.draw .mp-diagram .mp-node { animation: none !important; stroke-dashoffset: 0; opacity: 1; }
+}
+.fit { width: 1920px; height: 1080px; }
+
+.deck { padding: 56px 76px 68px; gap: 46px 64px; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) 250px; }
+.mark { grid-column: 1 / -1; grid-row: 1; }
+.panel { grid-row: 2; grid-column: 1 / -1; border-radius: 14px; align-self: center; height: min(100%, 660px); }
+.copy { grid-row: 3; grid-column: 1 / -1; }
+.deck[data-layout="card"] .copy, .deck[data-layout="end"] .copy { grid-row: 2 / 4; }
+
+.mark b { font-size: 19px; }
+.mark span { font-size: 13px; }
+
+.line > span { font-size: 80px; line-height: 1.04; }
+.deck[data-layout="card"] .line > span { font-size: 104px; }
+.sub { margin: 20px 0 0; font-size: 23px; line-height: 1.45; max-width: 72ch; }
+.deck[data-layout="card"] .sub { font-size: 28px; max-width: 48ch; }
+
+#card { padding-left: 76px; }
+#code { font-size: 27px; line-height: 2.05; }
+.stamp { font-size: 14px; padding: 10px 16px; }
+#callout .text { font-size: 15px; padding: 8px 13px; }
+
+.end .word { font-size: 108px; }
+.end p { font-size: 30px; }
+.end .fine { font-size: 18px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="fit" id="fit">
+  <div class="deck" id="deck" data-act="wiki" data-layout="stage">
+
+    <div class="mark"><b>Mermaid<i>Plus</i></b><span>the same files, drawn properly</span></div>
+
+    <section class="panel" id="panel">
+      <div class="glow"></div>
+      <div id="camera"></div>
+      <div class="vignette"></div>
+      <div class="scrim" id="scrim"></div>
+      <div id="card"><pre id="code"></pre></div>
+      <div id="callout"><span class="dot"></span><span class="rule"></span><span class="text"></span></div>
+      <div class="stamp">architecture.png &middot; last edited 18 March</div>
+    </section>
+
+    <section class="copy">
+      <div class="type-layer" id="type-layer"></div>
+    </section>
+
+    <div class="end">
+      <div class="word">Mermaid<i>Plus</i></div>
+      <p>Write Mermaid. Get a diagram worth showing.</p>
+      <div class="fine">Runs entirely in your browser. Nothing is uploaded.</div>
+    </div>
+
+  </div>
+</div>
+
+<script type="application/json" id="scene-svg">{"stale":"data:image/png;base64,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","fresh":"<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"mp-diagram\" data-theme=\"ocean-dark\" data-kind=\"flowchart\" role=\"img\" aria-label=\"flowchart diagram with 7 nodes\" data-lod=\"full\" data-edge-labels=\"on-line\" data-motion=\"on\" viewBox=\"8 8 880 234\" style=\"--mp-flow-name: mp-flow-25; --mp-flow-slice: 25; --mp-flow-count: 4; --mp-flow-cycle: 3s; --mp-flow-step: 0.75s;\" preserveAspectRatio=\"xMidYMid meet\"><title>flowchart diagram</title><desc>7 nodes, 6 connections. Customers, Load Balancer, Web Frontend, Orders API, PostgreSQL, Redis Cache, Elasticsearch</desc><style>.mp-diagram{--mp-color-canvas:#07161c;--mp-color-surface:#0d2029;--mp-color-surface-raised:#132a35;--mp-color-text:#d8eef5;--mp-color-text-muted:#7ea6b3;--mp-color-stroke:#22434f;--mp-color-edge:#5f9db0;--mp-color-edge-muted:#2b4d5a;--mp-font-family:\"Inter\", \"SF Pro Text\", -apple-system, \"Segoe UI\", Roboto, sans-serif;--mp-font-family-mono:\"JetBrains Mono\", \"SF Mono\", Menlo, Consolas, monospace;--mp-font-size-label:13px;--mp-font-size-title:15px;--mp-font-weight-label:500;--mp-font-weight-title:600;--mp-radius:14px;--mp-stroke-width:1.5px;--mp-color-flow:#38bdf8;--mp-shadow-0:drop-shadow(0 1px 1px rgba(0,0,0,0.4));--mp-shadow-1:drop-shadow(0 1px 2px rgba(0,0,0,0.45)) drop-shadow(0 4px 10px rgba(0,0,0,0.5));--mp-shadow-2:drop-shadow(0 3px 6px rgba(0,0,0,0.5)) drop-shadow(0 10px 22px rgba(0,0,0,0.6));--mp-accent-0:#38bdf8;--mp-accent-1:#818cf8;--mp-accent-2:#2dd4bf;--mp-accent-3:#fbbf24;--mp-accent-4:#fb7185;--mp-accent-5:#c084fc;--mp-arch-default-fill:#0d2029;--mp-arch-default-stroke:#2b4d5a;--mp-arch-default-text:#d8eef5;--mp-arch-process-fill:#0d2029;--mp-arch-process-stroke:#2b4d5a;--mp-arch-process-text:#d8eef5;--mp-arch-service-fill:#07303d;--mp-arch-service-stroke:#3d94b0;--mp-arch-service-text:#b3e2f2;--mp-arch-database-fill:#062f2a;--mp-arch-database-stroke:#2f9182;--mp-arch-database-text:#a7e8dc;--mp-arch-queue-fill:#33220c;--mp-arch-queue-stroke:#b0812c;--mp-arch-queue-text:#f3dcae;--mp-arch-storage-fill:#1c1e45;--mp-arch-storage-stroke:#5c63c4;--mp-arch-storage-text:#ccd0f7;--mp-arch-user-fill:#3a1226;--mp-arch-user-stroke:#b0517d;--mp-arch-user-text:#f6c9dd;--mp-arch-external-fill:#0a1a20;--mp-arch-external-stroke:#2b4d5a;--mp-arch-external-text:#7ea6b3;--mp-arch-decision-fill:#33290c;--mp-arch-decision-stroke:#b39a3a;--mp-arch-decision-text:#f2e5ac;--mp-arch-note-fill:#2e2a0d;--mp-arch-note-stroke:#a6942f;--mp-arch-note-text:#eee0a6;}.mp-diagram{font-family:var(--mp-font-family);font-size:var(--mp-font-size-label);text-rendering:geometricPrecision}.mp-node-body{stroke-width:var(--mp-stroke-width);filter:var(--mp-shadow-1)}.mp-diagram[data-lod=\"low\"] .mp-node-body{filter:none}.mp-node[data-archetype=\"external\"] .mp-node-body{stroke-dasharray:4 3}.mp-node[data-archetype=\"storage\"] .mp-node-band{fill:var(--mp-arch-storage-stroke)}.mp-node-label{font-weight:var(--mp-font-weight-label);text-anchor:middle;dominant-baseline:central}.mp-node[data-selected=\"true\"] .mp-node-body-sketch path{stroke-width:calc(var(--mp-stroke-width) * 2)}.mp-node{cursor:pointer}.mp-node[data-dimmed=\"true\"],.mp-edge[data-dimmed=\"true\"],.mp-group[data-dimmed=\"true\"]{opacity:0.16;transition:opacity 160ms}.mp-node[data-receded=\"true\"],.mp-edge[data-receded=\"true\"]{opacity:0.3;transition:opacity 120ms}.mp-diagram[data-emphasis] .mp-node:not([data-receded]),.mp-diagram[data-emphasis] .mp-edge:not([data-receded]){transition:opacity 120ms}.mp-node-stack rect{fill:var(--mp-color-surface);stroke:var(--mp-color-stroke);stroke-width:var(--mp-stroke-width)}.mp-node[data-collapsed=\"true\"] .mp-node-body{stroke-width:calc(var(--mp-stroke-width) * 1.5)}.mp-node-badge circle{fill:var(--mp-color-edge)}.mp-node-badge text{fill:var(--mp-color-canvas);font-size:calc(var(--mp-font-size-label) * 0.75);font-weight:var(--mp-font-weight-title);text-anchor:middle;dominant-baseline:central}.mp-group-title[data-group-toggle]{cursor:pointer}.mp-group-title[data-group-toggle]:hover{fill:var(--mp-color-text)}.mp-edge[data-weight]:not([data-weight=\"1\"]) .mp-edge-path{stroke-width:calc(var(--mp-stroke-width) * 2.5)}.mp-diagram[data-lod=\"low\"] .mp-node-label,.mp-diagram[data-lod=\"low\"] .mp-node-icon,.mp-diagram[data-lod=\"low\"] .mp-edge-label-group,.mp-diagram[data-lod=\"low\"] .mp-edge-endlabel,.mp-diagram[data-lod=\"low\"] .mp-compartment-divider{display:none}.mp-diagram[data-lod=\"low\"] .mp-group-title{font-size:calc(var(--mp-font-size-label) * 2.2)}.mp-group-chip-lod{display:none}.mp-diagram[data-lod=\"low\"] .mp-group-chip:not(.mp-group-chip-lod){display:none}.mp-diagram[data-lod=\"low\"] .mp-group-chip-lod{display:block}.mp-node[data-shape=\"mindmapCircle\"] .mp-node-body{fill-opacity:0.28}.mp-compartment-divider{stroke:var(--mp-color-stroke);stroke-width:var(--mp-stroke-width)}.mp-node[data-archetype=\"default\"] .mp-compartment-divider,.mp-node[data-archetype=\"process\"] .mp-compartment-divider{stroke:var(--mp-color-stroke)}.mp-compartment-header{font-weight:var(--mp-font-weight-title)}.mp-compartment-stereotype{font-weight:var(--mp-font-weight-label);font-style:italic;opacity:0.75}.mp-compartment-line{text-anchor:start;font-size:calc(var(--mp-font-size-label) * 0.85);font-weight:400;font-family:var(--mp-font-family-mono)}.mp-edge-endlabel{fill:var(--mp-color-text-muted);font-size:calc(var(--mp-font-size-label) * 0.85);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--mp-color-canvas);stroke-width:3px;stroke-linejoin:round}.mp-edge[data-semantics=\"async\"] .mp-edge-path{stroke-dasharray:7 5}.mp-edge[data-semantics=\"dependency\"] .mp-edge-path{stroke-dasharray:5 4}.mp-sketch path{stroke-linecap:round;stroke-linejoin:round}.mp-group-sketch-fill{opacity:0.35}.mp-edge-path{fill:none;stroke:var(--mp-color-edge);stroke-width:var(--mp-stroke-width);stroke-linejoin:round;stroke-linecap:round}.mp-edge-path[data-edge-style=\"dashed\"]{stroke-dasharray:6 4}.mp-edge-path[data-edge-style=\"dotted\"]{stroke-dasharray:2 4}.mp-edge-path[data-edge-style=\"thick\"]{stroke-width:calc(var(--mp-stroke-width) * 2)}.mp-arrowhead{fill:var(--mp-color-edge)}.mp-edge-label-plate{fill:var(--mp-color-canvas);stroke:none}.mp-diagram[data-edge-labels=\"beside\"] .mp-edge-label-plate{fill:none}.mp-edge-label{fill:var(--mp-color-text-muted);font-size:calc(var(--mp-font-size-label) * 0.9);text-anchor:middle;dominant-baseline:central}.mp-group-body{stroke-width:var(--mp-stroke-width);stroke-dasharray:0}.mp-group-title{font-size:calc(var(--mp-font-size-label) * 0.82);font-weight:var(--mp-font-weight-title);letter-spacing:0.06em;text-transform:uppercase;dominant-baseline:central}.mp-group-chip{rx:4}.mp-node[data-archetype=\"service\"] .mp-node-body{fill:url(#mp-fill-service);stroke:var(--mp-arch-service-stroke)}.mp-node[data-archetype=\"service\"] .mp-node-label{fill:var(--mp-arch-service-text)}.mp-node[data-archetype=\"service\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-service-text)}.mp-node[data-archetype=\"database\"] .mp-node-body{fill:url(#mp-fill-database);stroke:var(--mp-arch-database-stroke)}.mp-node[data-archetype=\"database\"] .mp-node-label{fill:var(--mp-arch-database-text)}.mp-node[data-archetype=\"database\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-database-text)}.mp-node[data-archetype=\"queue\"] .mp-node-body{fill:url(#mp-fill-queue);stroke:var(--mp-arch-queue-stroke)}.mp-node[data-archetype=\"queue\"] .mp-node-label{fill:var(--mp-arch-queue-text)}.mp-node[data-archetype=\"queue\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-queue-text)}.mp-node[data-archetype=\"storage\"] .mp-node-body{fill:url(#mp-fill-storage);stroke:var(--mp-arch-storage-stroke)}.mp-node[data-archetype=\"storage\"] .mp-node-label{fill:var(--mp-arch-storage-text)}.mp-node[data-archetype=\"storage\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-storage-text)}.mp-node[data-archetype=\"user\"] .mp-node-body{fill:url(#mp-fill-user);stroke:var(--mp-arch-user-stroke)}.mp-node[data-archetype=\"user\"] .mp-node-label{fill:var(--mp-arch-user-text)}.mp-node[data-archetype=\"user\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-user-text)}.mp-node[data-archetype=\"external\"] .mp-node-body{fill:url(#mp-fill-external);stroke:var(--mp-arch-external-stroke)}.mp-node[data-archetype=\"external\"] .mp-node-label{fill:var(--mp-arch-external-text)}.mp-node[data-archetype=\"external\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-external-text)}.mp-node[data-archetype=\"process\"] .mp-node-body{fill:url(#mp-fill-process);stroke:var(--mp-arch-process-stroke)}.mp-node[data-archetype=\"process\"] .mp-node-label{fill:var(--mp-arch-process-text)}.mp-node[data-archetype=\"process\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-process-text)}.mp-node[data-archetype=\"decision\"] .mp-node-body{fill:url(#mp-fill-decision);stroke:var(--mp-arch-decision-stroke)}.mp-node[data-archetype=\"decision\"] .mp-node-label{fill:var(--mp-arch-decision-text)}.mp-node[data-archetype=\"decision\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-decision-text)}.mp-node[data-archetype=\"note\"] .mp-node-body{fill:url(#mp-fill-note);stroke:var(--mp-arch-note-stroke)}.mp-node[data-archetype=\"note\"] .mp-node-label{fill:var(--mp-arch-note-text)}.mp-node[data-archetype=\"note\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-note-text)}.mp-node[data-archetype=\"default\"] .mp-node-body{fill:url(#mp-fill-default);stroke:var(--mp-arch-default-stroke)}.mp-node[data-archetype=\"default\"] .mp-node-label{fill:var(--mp-arch-default-text)}.mp-node[data-archetype=\"default\"] .mp-node-icon[data-monochrome=\"true\"]{color:var(--mp-arch-default-text)}.mp-node .mp-node-body.mp-node-solid,.mp-node .mp-node-solid{fill:var(--mp-color-edge);stroke:none;filter:none}.mp-node .mp-node-body.mp-node-ring{fill:var(--mp-color-canvas);stroke:var(--mp-color-edge);filter:none}.mp-node[data-section][data-archetype] .mp-node-body{fill:var(--mp-section-fill);fill-opacity:0.16;stroke:var(--mp-section-fill)}.mp-node[data-match=\"true\"] .mp-node-body{stroke:var(--mp-accent-3);stroke-width:calc(var(--mp-stroke-width) * 2.5)}.mp-node[data-selected=\"true\"] .mp-node-body{stroke-width:calc(var(--mp-stroke-width) * 2.5);filter:var(--mp-shadow-2)}.mp-node[data-hovered=\"true\"] .mp-node-body{filter:var(--mp-shadow-2)}.mp-node-body{transition:filter 160ms ease,stroke-width 120ms ease}@keyframes mp-fade-in{from{opacity:0}}@keyframes mp-rise-in{from{opacity:0;transform:scale(0.93)}}.mp-diagram[data-motion=\"on\"] .mp-node{transition:transform 320ms cubic-bezier(0.2,0.9,0.3,1)}.mp-diagram[data-motion=\"on\"] .mp-edges{transition:opacity 320ms ease}.mp-diagram[data-motion=\"on\"] .mp-group{animation:mp-fade-in 260ms ease backwards}.mp-diagram[data-motion=\"on\"] .mp-node{animation:mp-fade-in 260ms ease backwards;animation-delay:calc(var(--mp-i,0) * 14ms)}.mp-diagram[data-motion=\"on\"] .mp-node-body{transform-box:fill-box;transform-origin:center;animation:mp-rise-in 300ms cubic-bezier(0.2,0.9,0.3,1) backwards;animation-delay:calc(var(--mp-i,0) * 14ms)}.mp-diagram[data-motion=\"on\"] .mp-edge{animation:mp-fade-in 300ms ease backwards;animation-delay:calc(90ms + var(--mp-i,0) * 10ms)}.mp-edge-flow{fill:none;stroke:var(--mp-color-flow);stroke-linecap:round;stroke-dasharray:9 91;opacity:0;pointer-events:none;stroke-width:calc(var(--mp-stroke-width) * 1.7)}.mp-diagram[data-motion=\"on\"] .mp-edge[data-flow=\"true\"] .mp-edge-flow,.mp-diagram[data-motion=\"on\"][data-emphasis] .mp-edge:not([data-receded]) .mp-edge-flow{animation:var(--mp-flow-name) var(--mp-flow-cycle) linear infinite;animation-delay:calc(var(--mp-d,0) * var(--mp-flow-step))}.mp-diagram[data-motion=\"on\"] .mp-edge[data-dimmed=\"true\"] .mp-edge-flow,.mp-diagram[data-motion=\"on\"] .mp-edge[data-receded=\"true\"] .mp-edge-flow{opacity:0;animation:none}@media (prefers-reduced-motion:reduce){.mp-diagram *{animation:none !important;transition:none !important}.mp-edge-flow{opacity:0 !important}}@keyframes mp-flow-25{0%{stroke-dashoffset:100;opacity:0.9}25%{stroke-dashoffset:0;opacity:0.9}25.1%{opacity:0}100%{opacity:0}}</style><defs><linearGradient id=\"mp-fill-service\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-service-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-service-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-database\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-database-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-database-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-queue\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-queue-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-queue-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-storage\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-storage-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-storage-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-user\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-user-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-user-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-external\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-external-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-external-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-process\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-process-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-process-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-decision\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-decision-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-decision-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-note\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-note-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-note-fill)\"></stop></linearGradient><linearGradient id=\"mp-fill-default\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"color-mix(in srgb, var(--mp-arch-default-fill) 88%, white)\"></stop><stop offset=\"100%\" stop-color=\"var(--mp-arch-default-fill)\"></stop></linearGradient><marker id=\"mp-m-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"9\" markerHeight=\"9\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 Z\" style=\"fill: var(--mp-color-edge);\"></path></marker><marker id=\"mp-m-arrow-open\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"10\" markerHeight=\"10\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><path d=\"M 1 1 L 9 5 L 1 9\" style=\"fill: none; stroke: var(--mp-color-edge); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;\"></path></marker><marker id=\"mp-m-triangle-open\" viewBox=\"0 0 14 14\" refX=\"13\" refY=\"7\" markerWidth=\"14\" markerHeight=\"14\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><path d=\"M 1 1 L 13 7 L 1 13 Z\" style=\"fill: var(--mp-color-canvas); stroke: var(--mp-color-edge); stroke-width: 1.5; stroke-linejoin: round;\"></path></marker><marker id=\"mp-m-diamond-open\" viewBox=\"0 0 16 10\" refX=\"15\" refY=\"5\" markerWidth=\"16\" markerHeight=\"10\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><path d=\"M 1 5 L 8 1 L 15 5 L 8 9 Z\" style=\"fill: var(--mp-color-canvas); stroke: var(--mp-color-edge); stroke-width: 1.5; stroke-linejoin: round;\"></path></marker><marker id=\"mp-m-diamond-filled\" viewBox=\"0 0 16 10\" refX=\"15\" refY=\"5\" markerWidth=\"16\" markerHeight=\"10\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><path d=\"M 1 5 L 8 1 L 15 5 L 8 9 Z\" style=\"fill: var(--mp-color-edge); stroke: var(--mp-color-edge); stroke-width: 1.5; stroke-linejoin: round;\"></path></marker><marker id=\"mp-m-one\" viewBox=\"0 0 12 12\" refX=\"11\" refY=\"6\" markerWidth=\"12\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><path d=\"M 6 1 L 6 11 M 0 6 L 11 6\" style=\"fill: none; stroke: var(--mp-color-edge); stroke-width: 1.5;\"></path></marker><marker id=\"mp-m-zero-or-one\" viewBox=\"0 0 18 12\" refX=\"17\" refY=\"6\" markerWidth=\"18\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><circle cx=\"5\" cy=\"6\" r=\"3.5\" style=\"fill: var(--mp-color-canvas); stroke: var(--mp-color-edge); stroke-width: 1.5;\"></circle><path d=\"M 12 1 L 12 11 M 8.5 6 L 17 6\" style=\"fill: none; stroke: var(--mp-color-edge); stroke-width: 1.5;\"></path></marker><marker id=\"mp-m-many\" viewBox=\"0 0 12 12\" refX=\"11\" refY=\"6\" markerWidth=\"12\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><path d=\"M 0 6 L 11 6 M 3 6 L 11 1 M 3 6 L 11 11\" style=\"fill: none; stroke: var(--mp-color-edge); stroke-width: 1.5;\"></path></marker><marker id=\"mp-m-one-or-more\" viewBox=\"0 0 16 12\" refX=\"15\" refY=\"6\" markerWidth=\"16\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><path d=\"M 4 1 L 4 11 M 0 6 L 15 6 M 7 6 L 15 1 M 7 6 L 15 11\" style=\"fill: none; stroke: var(--mp-color-edge); stroke-width: 1.5;\"></path></marker><marker id=\"mp-m-zero-or-more\" viewBox=\"0 0 20 12\" refX=\"19\" refY=\"6\" markerWidth=\"20\" markerHeight=\"12\" markerUnits=\"userSpaceOnUse\" orient=\"auto-start-reverse\"><circle cx=\"5\" cy=\"6\" r=\"3.5\" style=\"fill: var(--mp-color-canvas); stroke: var(--mp-color-edge); stroke-width: 1.5;\"></circle><path d=\"M 8.5 6 L 19 6 M 11 6 L 19 1 M 11 6 L 19 11\" style=\"fill: none; stroke: var(--mp-color-edge); stroke-width: 1.5;\"></path></marker></defs><g class=\"mp-groups\"></g><g class=\"mp-edges\"><g class=\"mp-edge\" data-edge-id=\"api-&gt;pg\" data-edge-style=\"solid\" data-semantics=\"flow\" data-flow=\"true\" data-layer=\"3\" style=\"--mp-i: 0; --mp-d: 3;\"><path class=\"mp-edge-path\" data-edge-style=\"solid\" d=\"M 669 123 C 701.567 123 701.567 46 734.133 46\" marker-end=\"url(#mp-m-arrow)\"></path><path class=\"mp-edge-flow\" d=\"M 669 123 C 701.567 123 701.567 46 734.133 46\" pathLength=\"100\"></path></g><g class=\"mp-edge\" data-edge-id=\"api-&gt;redis\" data-edge-style=\"solid\" data-semantics=\"flow\" data-flow=\"true\" data-layer=\"3\" style=\"--mp-i: 1; --mp-d: 3;\"><path class=\"mp-edge-path\" data-edge-style=\"solid\" d=\"M 669 132 C 701.567 132 701.567 132 734.133 132\" marker-end=\"url(#mp-m-arrow)\"></path><path class=\"mp-edge-flow\" d=\"M 669 132 C 701.567 132 701.567 132 734.133 132\" pathLength=\"100\"></path></g><g class=\"mp-edge\" data-edge-id=\"api-&gt;solr\" data-edge-style=\"solid\" data-semantics=\"flow\" data-flow=\"true\" data-layer=\"3\" style=\"--mp-i: 2; --mp-d: 3;\"><path class=\"mp-edge-path\" data-edge-style=\"solid\" d=\"M 669 142 C 701.567 142 701.567 211 734.133 211\" marker-end=\"url(#mp-m-arrow)\"></path><path class=\"mp-edge-flow\" d=\"M 669 142 C 701.567 142 701.567 211 734.133 211\" pathLength=\"100\"></path></g><g class=\"mp-edge\" data-edge-id=\"lb-&gt;web\" data-edge-style=\"solid\" data-semantics=\"flow\" data-flow=\"true\" data-layer=\"1\" style=\"--mp-i: 3; --mp-d: 1;\"><path class=\"mp-edge-path\" data-edge-style=\"solid\" d=\"M 301 132 C 331 132 331 132 361 132\" marker-end=\"url(#mp-m-arrow)\"></path><path class=\"mp-edge-flow\" d=\"M 301 132 C 331 132 331 132 361 132\" pathLength=\"100\"></path></g><g class=\"mp-edge\" data-edge-id=\"users-&gt;lb\" data-edge-style=\"solid\" data-semantics=\"flow\" data-flow=\"true\" data-layer=\"0\" style=\"--mp-i: 4; --mp-d: 0;\"><path class=\"mp-edge-path\" data-edge-style=\"solid\" d=\"M 120 132 C 150 132 150 132 180 132\" marker-end=\"url(#mp-m-arrow)\"></path><path class=\"mp-edge-flow\" d=\"M 120 132 C 150 132 150 132 180 132\" pathLength=\"100\"></path></g><g class=\"mp-edge\" data-edge-id=\"web-&gt;api\" data-edge-style=\"solid\" data-semantics=\"flow\" data-flow=\"true\" data-layer=\"2\" style=\"--mp-i: 5; --mp-d: 2;\"><path class=\"mp-edge-path\" data-edge-style=\"solid\" d=\"M 481 132 C 511 132 511 132 541 132\" marker-end=\"url(#mp-m-arrow)\"></path><path class=\"mp-edge-flow\" d=\"M 481 132 C 511 132 511 132 541 132\" pathLength=\"100\"></path></g></g><g class=\"mp-nodes\"><g class=\"mp-node\" data-node-id=\"api\" data-archetype=\"service\" data-shape=\"square\" transform=\"translate(541 113)\" style=\"--mp-i: 0;\"><rect class=\"mp-node-body\" width=\"128\" height=\"38\" rx=\"14\"></rect><g class=\"mp-node-icon\" data-monochrome=\"true\" transform=\"translate(18 10)\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\"><rect width=\"20\" height=\"8\" x=\"2\" y=\"2\" rx=\"2\" ry=\"2\"></rect><rect width=\"20\" height=\"8\" x=\"2\" y=\"14\" rx=\"2\" ry=\"2\"></rect><path d=\"M6 6h.01M6 18h.01\"></path></g></svg></g><text class=\"mp-node-label\" x=\"77\" y=\"19\"><tspan x=\"77\" dy=\"0\">Orders API</tspan></text></g><g class=\"mp-node\" data-node-id=\"lb\" data-archetype=\"default\" data-shape=\"square\" transform=\"translate(180 113)\" style=\"--mp-i: 1;\"><rect class=\"mp-node-body\" width=\"121\" height=\"38\" rx=\"14\"></rect><text class=\"mp-node-label\" x=\"60.5\" y=\"19\"><tspan x=\"60.5\" dy=\"0\">Load Balancer</tspan></text></g><g class=\"mp-node\" data-node-id=\"pg\" data-archetype=\"database\" data-shape=\"cylinder\" transform=\"translate(734.1333333333333 20)\" style=\"--mp-i: 2;\"><path class=\"mp-node-body\" d=\"M 0 7 A 67 7 0 0 1 134 7 L 134 45 A 67 7 0 0 1 0 45 Z M 0 7 A 67 7 0 0 0 134 7 Z\"></path><g class=\"mp-node-icon\" data-monochrome=\"false\" transform=\"translate(18 24)\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 256 264\"><path d=\"M255.008 158.086c-1.535-4.649-5.556-7.887-10.756-8.664c-2.452-.366-5.26-.21-8.583.475c-5.792 1.195-10.089 1.65-13.225 1.738c11.837-19.985 21.462-42.775 27.003-64.228c8.96-34.689 4.172-50.492-1.423-57.64C233.217 10.847 211.614.683 185.552.372c-13.903-.17-26.108 2.575-32.475 4.549c-5.928-1.046-12.302-1.63-18.99-1.738c-12.537-.2-23.614 2.533-33.079 8.15c-5.24-1.772-13.65-4.27-23.362-5.864c-22.842-3.75-41.252-.828-54.718 8.685C6.622 25.672-.937 45.684.461 73.634c.444 8.874 5.408 35.874 13.224 61.48c4.492 14.718 9.282 26.94 14.237 36.33c7.027 13.315 14.546 21.156 22.987 23.972c4.731 1.576 13.327 2.68 22.368-4.85c1.146 1.388 2.675 2.767 4.704 4.048c2.577 1.625 5.728 2.953 8.875 3.74c11.341 2.835 21.964 2.126 31.027-1.848c.056 1.612.099 3.152.135 4.482c.06 2.157.12 4.272.199 6.25c.537 13.374 1.447 23.773 4.143 31.049c.148.4.347 1.01.557 1.657c1.345 4.118 3.594 11.012 9.316 16.411c5.925 5.593 13.092 7.308 19.656 7.308c3.292 0 6.433-.432 9.188-1.022c9.82-2.105 20.973-5.311 29.041-16.799c7.628-10.86 11.336-27.217 12.007-52.99q.13-1.094.244-2.088l.16-1.362l1.797.158l.463.031c10.002.456 22.232-1.665 29.743-5.154c5.935-2.754 24.954-12.795 20.476-26.351\"></path><path fill=\"#336791\" d=\"M237.906 160.722c-29.74 6.135-31.785-3.934-31.785-3.934c31.4-46.593 44.527-105.736 33.2-120.211c-30.904-39.485-84.399-20.811-85.292-20.327l-.287.052c-5.876-1.22-12.451-1.946-19.842-2.067c-13.456-.22-23.664 3.528-31.41 9.402c0 0-95.43-39.314-90.991 49.444c.944 18.882 27.064 142.873 58.218 105.422c11.387-13.695 22.39-25.274 22.39-25.274c5.464 3.63 12.006 5.482 18.864 4.817l.533-.452c-.166 1.7-.09 3.363.213 5.332c-8.026 8.967-5.667 10.541-21.711 13.844c-16.235 3.346-6.698 9.302-.471 10.86c7.549 1.887 25.013 4.561 36.813-11.958l-.47 1.885c3.144 2.519 5.352 16.383 4.982 28.952c-.37 12.568-.617 21.197 1.86 27.937c2.479 6.74 4.948 21.905 26.04 17.386c17.623-3.777 26.756-13.564 28.027-29.89c.901-11.606 2.942-9.89 3.07-20.267l1.637-4.912c1.887-15.733.3-20.809 11.157-18.448l2.64.232c7.99.363 18.45-1.286 24.589-4.139c13.218-6.134 21.058-16.377 8.024-13.686z\"></path><path fill=\"#fff\" d=\"M108.076 81.525c-2.68-.373-5.107-.028-6.335.902c-.69.523-.904 1.129-.962 1.546c-.154 1.105.62 2.327 1.096 2.957c1.346 1.784 3.312 3.01 5.258 3.28q.423.059.842.058c3.245 0 6.196-2.527 6.456-4.392c.325-2.336-3.066-3.893-6.355-4.35m88.784.073c-.256-1.831-3.514-2.353-6.606-1.923c-3.088.43-6.082 1.824-5.832 3.659c.2 1.427 2.777 3.863 5.827 3.863q.387 0 .78-.054c2.036-.282 3.53-1.575 4.24-2.32c1.08-1.136 1.706-2.402 1.591-3.225\"></path><path fill=\"#fff\" d=\"M247.802 160.025c-1.134-3.429-4.784-4.532-10.848-3.28c-18.005 3.716-24.453 1.142-26.57-.417c13.995-21.32 25.508-47.092 31.719-71.137c2.942-11.39 4.567-21.968 4.7-30.59c.147-9.463-1.465-16.417-4.789-20.665c-13.402-17.125-33.072-26.311-56.882-26.563c-16.369-.184-30.199 4.005-32.88 5.183c-5.646-1.404-11.801-2.266-18.502-2.376c-12.288-.199-22.91 2.743-31.704 8.74c-3.82-1.422-13.692-4.811-25.765-6.756c-20.872-3.36-37.458-.814-49.294 7.571c-14.123 10.006-20.643 27.892-19.38 53.16c.425 8.501 5.269 34.653 12.913 59.698c10.062 32.964 21 51.625 32.508 55.464c1.347.449 2.9.763 4.613.763c4.198 0 9.345-1.892 14.7-8.33a530 530 0 0 1 20.261-22.926c4.524 2.428 9.494 3.784 14.577 3.92q.016.2.035.398a118 118 0 0 0-2.57 3.175c-3.522 4.471-4.255 5.402-15.592 7.736c-3.225.666-11.79 2.431-11.916 8.435c-.136 6.56 10.125 9.315 11.294 9.607c4.074 1.02 7.999 1.523 11.742 1.523c9.103 0 17.114-2.992 23.516-8.781c-.197 23.386.778 46.43 3.586 53.451c2.3 5.748 7.918 19.795 25.664 19.794c2.604 0 5.47-.303 8.623-.979c18.521-3.97 26.564-12.156 29.675-30.203c1.665-9.645 4.522-32.676 5.866-45.03c2.836.885 6.487 1.29 10.434 1.289c8.232 0 17.731-1.749 23.688-4.514c6.692-3.108 18.768-10.734 16.578-17.36m-44.106-83.48c-.061 3.647-.563 6.958-1.095 10.414c-.573 3.717-1.165 7.56-1.314 12.225c-.147 4.54.42 9.26.968 13.825c1.108 9.22 2.245 18.712-2.156 28.078a37 37 0 0 1-1.95-4.009c-.547-1.326-1.735-3.456-3.38-6.404c-6.399-11.476-21.384-38.35-13.713-49.316c2.285-3.264 8.084-6.62 22.64-4.813m-17.644-61.787c21.334.471 38.21 8.452 50.158 23.72c9.164 11.711-.927 64.998-30.14 110.969a171 171 0 0 0-.886-1.117l-.37-.462c7.549-12.467 6.073-24.802 4.759-35.738c-.54-4.488-1.05-8.727-.92-12.709c.134-4.22.692-7.84 1.232-11.34c.663-4.313 1.338-8.776 1.152-14.037c.139-.552.195-1.204.122-1.978c-.475-5.045-6.235-20.144-17.975-33.81c-6.422-7.475-15.787-15.84-28.574-21.482c5.5-1.14 13.021-2.203 21.442-2.016M66.674 175.778c-5.9 7.094-9.974 5.734-11.314 5.288c-8.73-2.912-18.86-21.364-27.791-50.624c-7.728-25.318-12.244-50.777-12.602-57.916c-1.128-22.578 4.345-38.313 16.268-46.769c19.404-13.76 51.306-5.524 64.125-1.347c-.184.182-.376.352-.558.537c-21.036 21.244-20.537 57.54-20.485 59.759c-.002.856.07 2.068.168 3.735c.362 6.105 1.036 17.467-.764 30.334c-1.672 11.957 2.014 23.66 10.111 32.109a36 36 0 0 0 2.617 2.468c-3.604 3.86-11.437 12.396-19.775 22.426m22.479-29.993c-6.526-6.81-9.49-16.282-8.133-25.99c1.9-13.592 1.199-25.43.822-31.79c-.053-.89-.1-1.67-.127-2.285c3.073-2.725 17.314-10.355 27.47-8.028c4.634 1.061 7.458 4.217 8.632 9.645c6.076 28.103.804 39.816-3.432 49.229c-.873 1.939-1.698 3.772-2.402 5.668l-.546 1.466c-1.382 3.706-2.668 7.152-3.465 10.424c-6.938-.02-13.687-2.984-18.819-8.34m1.065 37.9c-2.026-.506-3.848-1.385-4.917-2.114c.893-.42 2.482-.992 5.238-1.56c13.337-2.745 15.397-4.683 19.895-10.394c1.031-1.31 2.2-2.794 3.819-4.602l.002-.002c2.411-2.7 3.514-2.242 5.514-1.412c1.621.67 3.2 2.702 3.84 4.938c.303 1.056.643 3.06-.47 4.62c-9.396 13.156-23.088 12.987-32.921 10.526m69.799 64.952c-16.316 3.496-22.093-4.829-25.9-14.346c-2.457-6.144-3.665-33.85-2.808-64.447c.011-.407-.047-.8-.159-1.17a15.4 15.4 0 0 0-.456-2.162c-1.274-4.452-4.379-8.176-8.104-9.72c-1.48-.613-4.196-1.738-7.46-.903c.696-2.868 1.903-6.107 3.212-9.614l.549-1.475c.618-1.663 1.394-3.386 2.214-5.21c4.433-9.848 10.504-23.337 3.915-53.81c-2.468-11.414-10.71-16.988-23.204-15.693c-7.49.775-14.343 3.797-17.761 5.53c-.735.372-1.407.732-2.035 1.082c.954-11.5 4.558-32.992 18.04-46.59c8.489-8.56 19.794-12.788 33.568-12.56c27.14.444 44.544 14.372 54.366 25.979c8.464 10.001 13.047 20.076 14.876 25.51c-13.755-1.399-23.11 1.316-27.852 8.096c-10.317 14.748 5.644 43.372 13.315 57.129c1.407 2.521 2.621 4.7 3.003 5.626c2.498 6.054 5.732 10.096 8.093 13.046c.724.904 1.426 1.781 1.96 2.547c-4.166 1.201-11.649 3.976-10.967 17.847c-.55 6.96-4.461 39.546-6.448 51.059c-2.623 15.21-8.22 20.875-23.957 24.25m68.104-77.936c-4.26 1.977-11.389 3.46-18.161 3.779c-7.48.35-11.288-.838-12.184-1.569c-.42-8.644 2.797-9.547 6.202-10.503c.535-.15 1.057-.297 1.561-.473q.469.383 1.032.756c6.012 3.968 16.735 4.396 31.874 1.271l.166-.033c-2.042 1.909-5.536 4.471-10.49 6.772\"></path></svg></g><text class=\"mp-node-label\" x=\"80\" y=\"33\"><tspan x=\"80\" dy=\"0\">PostgreSQL</tspan></text></g><g class=\"mp-node\" data-node-id=\"redis\" data-archetype=\"database\" data-shape=\"cylinder\" transform=\"translate(734.1333333333333 106)\" style=\"--mp-i: 3;\"><path class=\"mp-node-body\" d=\"M 0 7 A 69 7 0 0 1 138 7 L 138 45 A 69 7 0 0 1 0 45 Z M 0 7 A 69 7 0 0 0 138 7 Z\"></path><g class=\"mp-node-icon\" data-monochrome=\"false\" transform=\"translate(18 24)\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 256 220\"><path fill=\"#912626\" d=\"M245.97 168.943c-13.662 7.121-84.434 36.22-99.501 44.075s-23.437 7.78-35.34 2.09c-11.902-5.69-87.216-36.112-100.783-42.597C3.566 169.271 0 166.535 0 163.951v-25.876s98.05-21.345 113.879-27.024c15.828-5.679 21.32-5.884 34.79-.95c13.472 4.936 94.018 19.468 107.331 24.344l-.006 25.51c.002 2.558-3.07 5.364-10.024 8.988\"></path><path fill=\"#c6302b\" d=\"M245.965 143.22c-13.661 7.118-84.431 36.218-99.498 44.072c-15.066 7.857-23.436 7.78-35.338 2.09c-11.903-5.686-87.214-36.113-100.78-42.594c-13.566-6.485-13.85-10.948-.524-16.166c13.326-5.22 88.224-34.605 104.055-40.284c15.828-5.677 21.319-5.884 34.789-.948c13.471 4.934 83.819 32.935 97.13 37.81c13.316 4.881 13.827 8.9.166 16.02\"></path><path fill=\"#912626\" d=\"M245.97 127.074c-13.662 7.122-84.434 36.22-99.501 44.078c-15.067 7.853-23.437 7.777-35.34 2.087c-11.903-5.687-87.216-36.112-100.783-42.597C3.566 127.402 0 124.67 0 122.085V96.206s98.05-21.344 113.879-27.023c15.828-5.679 21.32-5.885 34.79-.95C162.142 73.168 242.688 87.697 256 92.574l-.006 25.513c.002 2.557-3.07 5.363-10.024 8.987\"></path><path fill=\"#c6302b\" d=\"M245.965 101.351c-13.661 7.12-84.431 36.218-99.498 44.075c-15.066 7.854-23.436 7.777-35.338 2.087c-11.903-5.686-87.214-36.112-100.78-42.594c-13.566-6.483-13.85-10.947-.524-16.167C23.151 83.535 98.05 54.148 113.88 48.47c15.828-5.678 21.319-5.884 34.789-.949c13.471 4.934 83.819 32.933 97.13 37.81c13.316 4.88 13.827 8.9.166 16.02\"></path><path fill=\"#912626\" d=\"M245.97 83.653c-13.662 7.12-84.434 36.22-99.501 44.078c-15.067 7.854-23.437 7.777-35.34 2.087c-11.903-5.687-87.216-36.113-100.783-42.595C3.566 83.98 0 81.247 0 78.665v-25.88s98.05-21.343 113.879-27.021c15.828-5.68 21.32-5.884 34.79-.95C162.142 29.749 242.688 44.278 256 49.155l-.006 25.512c.002 2.555-3.07 5.361-10.024 8.986\"></path><path fill=\"#c6302b\" d=\"M245.965 57.93c-13.661 7.12-84.431 36.22-99.498 44.074c-15.066 7.854-23.436 7.777-35.338 2.09C99.227 98.404 23.915 67.98 10.35 61.497S-3.5 50.55 9.825 45.331C23.151 40.113 98.05 10.73 113.88 5.05c15.828-5.679 21.319-5.883 34.789-.948s83.819 32.934 97.13 37.811c13.316 4.876 13.827 8.897.166 16.017\"></path><path fill=\"#fff\" d=\"m159.283 32.757l-22.01 2.285l-4.927 11.856l-7.958-13.23l-25.415-2.284l18.964-6.839l-5.69-10.498l17.755 6.944l16.738-5.48l-4.524 10.855zm-28.251 57.518L89.955 73.238l58.86-9.035zm-56.95-50.928c17.375 0 31.46 5.46 31.46 12.194c0 6.736-14.085 12.195-31.46 12.195s-31.46-5.46-31.46-12.195c0-6.734 14.085-12.194 31.46-12.194\"></path><path fill=\"#621b1c\" d=\"m185.295 35.998l34.836 13.766l-34.806 13.753z\"></path><path fill=\"#9a2928\" d=\"m146.755 51.243l38.54-15.245l.03 27.519l-3.779 1.478z\"></path></svg></g><text class=\"mp-node-label\" x=\"82\" y=\"33\"><tspan x=\"82\" dy=\"0\">Redis Cache</tspan></text></g><g class=\"mp-node\" data-node-id=\"solr\" data-archetype=\"default\" data-shape=\"square\" transform=\"translate(734.1333333333333 192)\" style=\"--mp-i: 4;\"><rect class=\"mp-node-body\" width=\"141\" height=\"38\" rx=\"14\"></rect><g class=\"mp-node-icon\" data-monochrome=\"false\" transform=\"translate(18 10)\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 256 288\"><path fill=\"#343741\" d=\"M0 143.82c0 12.44 1.744 24.441 4.71 35.956h175.067c19.856 0 35.955-16.1 35.955-35.956c0-19.865-16.1-35.955-35.955-35.955H4.71C1.744 119.371 0 131.38 0 143.82\"></path><path fill=\"#fec514\" d=\"M242.013 68.863c5.025-4.629 9.7-9.6 13.987-14.93C229.636 21.079 189.213 0 143.82 0C87 0 38.101 33.052 14.775 80.9h196.559c11.38 0 22.319-4.324 30.678-12.037\"></path><path fill=\"#00bfb3\" d=\"M211.334 206.742H14.774c23.336 47.839 72.226 80.9 129.045 80.9c45.393 0 85.816-21.088 112.18-53.933a136.6 136.6 0 0 0-13.987-14.94c-8.36-7.721-19.299-12.027-30.678-12.027\"></path></svg></g><text class=\"mp-node-label\" x=\"83.5\" y=\"19\"><tspan x=\"83.5\" dy=\"0\">Elasticsearch</tspan></text></g><g class=\"mp-node\" data-node-id=\"users\" data-archetype=\"default\" data-shape=\"square\" transform=\"translate(20 113)\" style=\"--mp-i: 5;\"><rect class=\"mp-node-body\" width=\"100\" height=\"38\" rx=\"14\"></rect><text class=\"mp-node-label\" x=\"50\" y=\"19\"><tspan x=\"50\" dy=\"0\">Customers</tspan></text></g><g class=\"mp-node\" data-node-id=\"web\" data-archetype=\"default\" data-shape=\"square\" transform=\"translate(361 113)\" style=\"--mp-i: 6;\"><rect class=\"mp-node-body\" width=\"120\" height=\"38\" rx=\"14\"></rect><text class=\"mp-node-label\" x=\"60\" y=\"19\"><tspan x=\"60\" dy=\"0\">Web Frontend</tspan></text></g></g></svg>"}</script>
+<script type="application/json" id="scene-steps">[{"ms":4400,"act":"wiki","pic":"stale"},{"ms":4400,"act":"wiki","pic":"stale","title":["This was right in March."]},{"ms":5000,"act":"wiki","pic":"stale","cam":{"s":1.7,"x":-23.5,"y":-22.4},"callout":{"x":8,"y":76,"text":"replaced in June","width":64},"title":["This was right in March."]},{"ms":4600,"act":"wiki","pic":"stale","cam":{"s":3,"x":-6.7,"y":2.7},"title":["It's a <em>PNG</em>."]},{"ms":4600,"act":"wiki","pic":"stale","cam":{"s":1.7,"x":-23.5,"y":-22.4},"title":["Nobody can fix it."]},{"ms":5400,"act":"turn","pic":null,"code":["flowchart LR","  users[Customers] --> lb[Load Balancer]","  lb --> web[Web Frontend]","  web --> api[Orders API]","  api --> pg[(PostgreSQL)]","  api --> redis[(Redis Cache)]","  api --> solr[Solr Search]","  api --> cron[Cron Runner]"],"title":["It was always text."]},{"ms":6400,"act":"turn","pic":null,"code":["flowchart LR","  users[Customers] --> lb[Load Balancer]","  lb --> web[Web Frontend]","  web --> api[Orders API]","  api --> pg[(PostgreSQL)]","  api --> redis[(Redis Cache)]","  api --> solr[Solr Search]","  api --> cron[Cron Runner]"],"edits":[{"line":7,"cut":true,"at":900},{"line":6,"from":"Solr Search]","to":"Elasticsearch]","at":2400}],"title":["Anyone can fix <em>a line</em>."]},{"ms":5000,"act":"alive","pic":"fresh","draw":true},{"ms":5000,"act":"alive","pic":"fresh","title":["Same system.","Right this time."]},{"ms":4600,"act":"alive","pic":"fresh","cam":{"s":1.7,"x":-8,"y":4},"title":["And it stays right."],"sub":"Because it is a file in your repository, reviewed like anything else."},{"ms":5600,"act":"alive","pic":"fresh","dim":0.8,"title":["Diagrams rot.","<em>Text</em> does not."]},{"ms":5400,"act":"alive","pic":null,"close":true}]</script>
+<script>
+// The deck is composed at one size so a recording is framed exactly. Landscape
+// fits inside the window; vertical covers it, because a phone taller than 9:16
+// would otherwise show the film in a letterbox with black above and below.
+const FILL = false;
+const fit = document.getElementById('fit');
+function scale() {
+  const w = fit.offsetWidth, h = fit.offsetHeight;
+  const sx = innerWidth / w, sy = innerHeight / h;
+  const k = FILL ? Math.max(sx, sy) : Math.min(sx, sy);
+  fit.style.transform = `scale(${k})`;
+  fit.style.transformOrigin = 'top left';
+  fit.style.left = `${(innerWidth - w * k) / 2}px`;
+  fit.style.top = `${(innerHeight - h * k) / 2}px`;
+}
+addEventListener('resize', scale);
+scale();
+</script>
+<script>const SVG = JSON.parse(document.getElementById('scene-svg').textContent);
+const STEPS = JSON.parse(document.getElementById('scene-steps').textContent);
+
+const deck = document.getElementById('deck');
+const camera = document.getElementById('camera');
+const scrim = document.getElementById('scrim');
+const typeLayer = document.getElementById('type-layer');
+const card = document.getElementById('card');
+const code = document.getElementById('code');
+const callout = document.getElementById('callout');
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** The wiki picture is a raster; everything after the turn is vector. */
+let showing = null;
+function setPicture(step) {
+  const name = step.pic ?? null;
+  if (name === showing) return;
+  showing = name;
+  const sheet = document.createElement('div');
+  sheet.className = 'sheet' + (step.draw && !still ? ' draw' : '');
+  if (name) {
+    sheet.innerHTML = SVG[name].startsWith('data:')
+      ? `<img src="${SVG[name]}" alt="">`
+      : SVG[name];
+  }
+  camera.append(sheet);
+  requestAnimationFrame(() => sheet.classList.add('in'));
+  for (const old of camera.querySelectorAll('.sheet')) {
+    if (old === sheet) continue;
+    old.classList.add('out');
+    setTimeout(() => old.remove(), 900);
+  }
+}
+
+function setCamera(step, ms) {
+  const cam = step.cam ?? { s: 1, x: 0, y: 0 };
+  camera.style.setProperty('--cam-ms', `${ms}ms`);
+  camera.style.setProperty('--s', cam.s ?? 1);
+  camera.style.setProperty('--x', `${cam.x ?? 0}%`);
+  camera.style.setProperty('--y', `${cam.y ?? 0}%`);
+}
+
+function setType(step) {
+  for (const line of [...typeLayer.children]) {
+    line.classList.add('out');
+    setTimeout(() => line.remove(), 440);
+  }
+  (step.title ?? []).forEach((text, i) => {
+    const line = document.createElement('span');
+    line.className = 'line';
+    const inner = document.createElement('span');
+    inner.innerHTML = text;
+    inner.style.animationDelay = `${140 + i * 110}ms`;
+    line.append(inner);
+    typeLayer.append(line);
+  });
+  if (step.sub) {
+    const p = document.createElement('p');
+    p.className = 'sub';
+    p.innerHTML = step.sub;
+    typeLayer.append(p);
+  }
+}
+
+/**
+ * The source, and the two edits that put it right.
+ *
+ * This is the turn of the film, so the correction is shown rather than
+ * described: one line is struck through and folds away, one word is replaced.
+ * Small enough that "anyone can fix a line" is a claim you can watch.
+ */
+function setCode(step) {
+  card.classList.toggle('on', !!step.code);
+  if (!step.code) return;
+  if (code.dataset.of !== String(step.code.length)) {
+    code.textContent = '';
+    for (const text of step.code) {
+      const line = document.createElement('span');
+      line.className = 'cl';
+      line.textContent = text || ' ';
+      code.append(line);
+    }
+    code.dataset.of = String(step.code.length);
+  }
+  if (!step.edits) return;
+  const lines = [...code.children];
+  for (const edit of step.edits) {
+    const line = lines[edit.line];
+    if (!line) continue;
+    if (edit.cut) {
+      setTimeout(() => line.classList.add('cut'), edit.at ?? 700);
+      setTimeout(() => line.classList.add('gone'), (edit.at ?? 700) + 900);
+    } else if (edit.to) {
+      setTimeout(async () => {
+        const before = line.textContent.split(edit.from)[0];
+        for (let i = 0; i <= edit.to.length; i++) {
+          line.innerHTML = before + '<span class="ed">' + edit.to.slice(0, i) + '</span>';
+          await sleep(still ? 0 : 55);
+        }
+      }, edit.at ?? 1800);
+    }
+  }
+}
+
+function setCallout(step) {
+  callout.classList.remove('on');
+  if (!step.callout) return;
+  const { x, y, text, width } = step.callout;
+  callout.style.left = `${x}%`;
+  callout.style.top = `${y}%`;
+  callout.querySelector('.rule').style.width = `${width ?? 60}px`;
+  callout.querySelector('.text').textContent = text;
+  setTimeout(() => callout.classList.add('on'), Math.max(300, step.ms * 0.5));
+}
+
+async function play() {
+  for (;;) {
+    showing = null;
+    code.dataset.of = '';
+    for (const step of STEPS) {
+      deck.dataset.act = step.act ?? 'alive';
+      deck.dataset.layout = step.close ? 'end' : step.dim ? 'card' : step.code ? 'text' : step.cam ? 'focus' : 'stage';
+      scrim.classList.toggle('on', !!step.dim);
+      if (step.dim) scrim.style.setProperty('--dim', step.dim);
+      setPicture(step);
+      setCamera(step, step.ms);
+      setType(step);
+      setCode(step);
+      setCallout(step);
+      await sleep(step.ms);
+    }
+    await sleep(600);
+  }
+}
+play();
+</script>
+</body>
+</html>

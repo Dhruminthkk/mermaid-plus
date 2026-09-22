@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contents — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html" aria-current="page">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Guide</p>
+    <h1>How to use Mermaid Plus</h1>
+    <p class="standfirst">
+      It reads the Mermaid you already write. This guide is about everything it
+      does with it afterwards — nine chapters, about twenty minutes end to end.
+    </p>
+
+    <h2>What it adds to Mermaid</h2>
+    <p>
+      Same files, same syntax. Every extension below is written as a
+      <code>%%</code> comment, so a file that uses them still renders in GitHub,
+      Notion and stock mermaid.js — you are not trading portability for any of it.
+    </p>
+
+    <div class="versus wide">
+      <table>
+        <thead><tr><th></th><th>Stock mermaid.js</th><th>Here</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Layout</td>
+            <td>Dagre. Subgraphs sit behind their contents</td>
+            <td>ELK layered. Subgraphs are containers the layout understands, edges route orthogonally with space reserved for their labels, and an edge can target a whole group</td>
+          </tr>
+          <tr>
+            <td>Node appearance</td>
+            <td>The bracket shape you typed, in the theme's colour</td>
+            <td>The shape, colour and icon are inferred from the label — a cylinder for a database, a dashed border for anything external, and about ninety real technology marks</td>
+          </tr>
+          <tr>
+            <td>Big diagrams</td>
+            <td>Everything is drawn, every time</td>
+            <td>Collapse a subgraph to one node and its crossing edges bundle with a count; focus by hop radius; find by name; semantic zoom; only what is on screen is drawn</td>
+          </tr>
+          <tr>
+            <td>Reading one</td>
+            <td>Read the source</td>
+            <td>Click any component for what it depends on, what depends on it, and the note the author wrote. Arrow keys follow connections</td>
+          </tr>
+          <tr>
+            <td>Presenting one</td>
+            <td>A picture</td>
+            <td>Numbered steps frame the diagram a part at a time with a note each. One key clears every piece of interface</td>
+          </tr>
+          <tr>
+            <td>Themes</td>
+            <td>Five, plus theme variables</td>
+            <td>Twenty, light and dark, each contrast-checked by a test. Edit the tokens and export the result as JSON</td>
+          </tr>
+          <tr>
+            <td>Export</td>
+            <td>SVG and PNG</td>
+            <td>Those, plus PDF, a standalone interactive HTML page, and a draw.io / Lucid file that is still a model rather than a picture</td>
+          </tr>
+          <tr>
+            <td>Where it runs</td>
+            <td>A library you wire up, or a hosted editor</td>
+            <td>Entirely in your browser. No account, and nothing is uploaded — which is what the hosted editors ask you to accept</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <p>
+        <strong>Nothing is given up.</strong> Thirteen diagram kinds — sequence,
+        gantt, pie, journey, git graph and the rest — are still drawn by
+        mermaid.js itself, wearing the same theme as everything else, so a new
+        upstream diagram kind works the day the dependency is updated.
+      </p>
+    </div>
+
+    <h2>The nine chapters</h2>
+
+    <div class="contents">
+
+      <section class="part">
+        <h2>Part one — the basics</h2>
+        <p>Enough to work. Read these two and you can put a diagram in a document today.</p>
+        <div class="chapters">
+          <a class="chapter" href="getting-started.html">
+            <span class="n">01</span><b>Getting started</b><span class="mins">2 min</span>
+            <p>An empty page, three lines of Mermaid, a diagram. Where the 210 examples live and how to get back to blank.</p>
+          </a>
+          <a class="chapter" href="shapes-and-icons.html">
+            <span class="n">02</span><b>Shapes and icons</b><span class="mins">3 min</span>
+            <p>The part everyone asks about: why <code>PostgreSQL</code> becomes a cylinder with an elephant on it, why <em>external</em> gets a dashed border, and the four rules that decide — plus how to overrule any of them.</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="part">
+        <h2>Part two — real systems</h2>
+        <p>What changes once the diagram is too big to take in at once, or somebody else has to read it.</p>
+        <div class="chapters">
+          <a class="chapter" href="large-systems.html">
+            <span class="n">03</span><b>Large systems</b><span class="mins">2 min</span>
+            <p>Collapsing subgraphs, focusing on a neighbourhood, finding a node by name, and turning the whole flow sideways.</p>
+          </a>
+          <a class="chapter" href="explaining.html">
+            <span class="n">04</span><b>Explaining a diagram</b><span class="mins">2 min</span>
+            <p>Putting the explanation in the file: notes, ownership, edge meaning. Then click-to-explain and walking the graph by keyboard.</p>
+          </a>
+          <a class="chapter" href="presenting.html">
+            <span class="n">05</span><b>Presenting</b><span class="mins">2 min</span>
+            <p>Numbered steps that make the diagram present itself, one key that clears the screen, and motion that travels in dependency order.</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="part">
+        <h2>Part three — getting it out, and looking things up</h2>
+        <p>Making it yours, taking it away, and the pages you come back to.</p>
+        <div class="chapters">
+          <a class="chapter" href="theming.html">
+            <span class="n">06</span><b>Theming</b><span class="mins">2 min</span>
+            <p>Ten families in light and dark, pinning one to a document, and editing the tokens underneath.</p>
+          </a>
+          <a class="chapter" href="exporting.html">
+            <span class="n">07</span><b>Exporting</b><span class="mins">2 min</span>
+            <p>What each of the seven formats is actually for, including the one that stays editable and the one that is a one-way trip.</p>
+          </a>
+          <a class="chapter" href="use-cases.html">
+            <span class="n">08</span><b>Use cases</b><span class="mins">4 min</span>
+            <p>Five real jobs with the source that does them: an architecture doc people read, onboarding, a postmortem, a design review, a 3am runbook.</p>
+          </a>
+          <a class="chapter" href="reference.html">
+            <span class="n">09</span><b>Reference</b><span class="mins">2 min</span>
+            <p>Every directive, keyboard shortcut, URL parameter and archetype, in one place.</p>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>

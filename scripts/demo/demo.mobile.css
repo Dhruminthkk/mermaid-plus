@@ -1,0 +1,25 @@
+.fit { width: 1080px; height: 1920px; }
+
+/* Margins wide enough that the crop on a phone taller than 9:16 takes nothing. */
+.deck { padding: 84px 92px 140px; gap: 56px; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) 560px; }
+.mark { grid-row: 1; }
+.panel { grid-row: 2; border-radius: 18px; }
+.copy { grid-row: 3; }
+.deck[data-layout="card"] .copy, .deck[data-layout="end"] .copy { grid-row: 2 / 4; }
+
+.mark b { font-size: 28px; }
+.mark span { font-size: 19px; }
+
+.line > span { font-size: 86px; line-height: 1.05; }
+.deck[data-layout="card"] .line > span { font-size: 96px; }
+.sub { margin: 26px 0 0; font-size: 33px; line-height: 1.4; max-width: 26ch; }
+.deck[data-layout="card"] .sub { font-size: 34px; max-width: 20ch; }
+
+#card { padding-left: 56px; }
+#code { font-size: 26px; line-height: 2.1; }
+.stamp { font-size: 22px; padding: 14px 22px; }
+#callout .text { font-size: 24px; padding: 12px 18px; }
+
+.end .word { font-size: 122px; }
+.end p { font-size: 40px; max-width: 18ch; }
+.end .fine { font-size: 26px; margin-top: 10px; }

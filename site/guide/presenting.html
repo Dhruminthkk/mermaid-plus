@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presenting — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html" aria-current="page">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 5</p>
+    <h1>Presenting</h1>
+    <p class="standfirst">
+      Nobody takes in a forty-node diagram cold. Number a few steps and it walks
+      people through itself — in a design review, on a new joiner's second day,
+      or on a call at 3am.
+    </p>
+
+    <h2>Write the steps</h2>
+<pre>%%mp: step 1 <i>title</i>="A shopper arrives" <i>focus</i>=shopper,cdn
+  <i>note</i>="Most catalogue reads never travel further than the edge."
+%%mp: step 2 <i>title</i>="Into the platform" <i>focus</i>=gw,orders
+  <i>note</i>="The gateway authenticates and routes. Nothing else is public."
+%%mp: step 3 <i>title</i>="Money is held, not taken" <i>focus</i>=payments,psp
+%%mp: step 4 <i>title</i>="The whole picture"</pre>
+    <p>Three things to know about <code>focus</code>:</p>
+    <ul>
+      <li>Naming a <strong>group</strong> names everything inside it.</li>
+      <li>Naming <strong>nothing</strong> makes a title card over the whole diagram — a good way to open and to close.</li>
+      <li>Steps run in numeric order, not the order you wrote them, so you can insert one later without renumbering.</li>
+    </ul>
+
+    <figure>
+      <img src="images/walkthrough.png" alt="A walkthrough step framing part of a diagram with the rest dimmed" width="1280" height="780" loading="lazy">
+      <figcaption>Each step frames what it names, dims the rest, and shows its note.</figcaption>
+    </figure>
+
+    <h2>Run it</h2>
+    <ol class="steps">
+      <li><p>Press <kbd>⌘K</kbd> and choose <em>Present walkthrough</em>. The chrome clears automatically.</p></li>
+      <li><p><kbd>→</kbd> and <kbd>←</kbd> move between steps. Or press play and it advances itself.</p></li>
+      <li><p><kbd>Esc</kbd> ends it and brings everything back.</p></li>
+    </ol>
+    <p>Deep-link into the middle of a story with <code>?step=3</code> — useful for pasting a specific moment into a ticket.</p>
+
+    <h2>Full-bleed</h2>
+    <p>
+      Press <kbd>F</kbd> and every piece of interface gets out of the way: no
+      toolbar, no editor, no status bar. Just the diagram, on a projector or a
+      shared screen. <kbd>Esc</kbd> brings it back.
+    </p>
+    <figure>
+      <img src="images/fullbleed.png" alt="Sixty services filling the entire screen with no interface around them" width="1280" height="780" loading="lazy">
+      <figcaption>Sixty services, nothing else. Typing an f in the editor still means the letter f.</figcaption>
+    </figure>
+
+    <h2>Motion that means something</h2>
+    <p>
+      A highlight travels the edges in <strong>dependency order</strong> — an edge
+      lights as the one feeding it lands — so the picture moves the way a request
+      does rather than shimmering at random. Selecting a node leaves only its
+      neighbourhood moving.
+    </p>
+    <div class="wide"><table>
+      <thead><tr><th>Directive</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td><code>layout flow=all</code></td><td>Every edge flows. The default</td></tr>
+        <tr><td><code>layout flow=auto</code></td><td>Only broken lines — the ones already marked indirect</td></tr>
+        <tr><td><code>layout flow=none</code></td><td>Still at rest; selecting still animates</td></tr>
+        <tr><td><code>layout motion=off</code></td><td>This diagram never animates</td></tr>
+      </tbody>
+    </table></div>
+    <p>
+      There is a motion toggle in the toolbar for all diagrams at once, and
+      anyone whose system asks for reduced motion gets none of it — in the app
+      and in exported pages.
+    </p>
+
+    <nav class="next">
+      <a class="back" href="explaining.html"><span>Back to</span><b>Explaining a diagram</b></a>
+      <a href="theming.html"><span>Next</span><b>Theming</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exporting — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html" aria-current="page">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 7</p>
+    <h1>Exporting</h1>
+    <p class="standfirst">
+      Every format is the same picture. What differs is what the person on the
+      other end can do with it — and one of them is not a picture at all.
+    </p>
+
+    <figure>
+      <img src="images/export.png" alt="The export menu open, listing image, editable and clipboard formats" width="1280" height="780" loading="lazy">
+      <figcaption>Clear background sits at the top because it changes what every entry below produces.</figcaption>
+    </figure>
+
+    <div class="wide"><table>
+      <thead><tr><th>Format</th><th>What it is for</th></tr></thead>
+      <tbody>
+        <tr><td>SVG</td><td>Docs and wikis. Styles are inlined and no CSS variables are left to resolve, so it renders anywhere</td></tr>
+        <tr><td>PNG 1× 2× 4×</td><td>Slides, issues, chat. 2× for a retina screen, 4× for print</td></tr>
+        <tr><td>PDF</td><td>Attachments and printing. Vector, so it stays sharp</td></tr>
+        <tr><td>HTML page</td><td>One standalone file that keeps pan, zoom, the motion, and the source it came from</td></tr>
+        <tr><td>draw.io / Lucid</td><td>Real shapes and connections. Editable on the other side, not a picture of a diagram</td></tr>
+        <tr><td>Copy as image</td><td>Straight into Slack, a doc, an email</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Clear background</h2>
+    <p>
+      The checkbox at the top of the menu drops the ground — both the background
+      and the diagram's own canvas — so the export sits on whatever colour your
+      slide is. It is remembered, so the next export is not a surprise.
+    </p>
+
+    <h2>The HTML page</h2>
+    <p>
+      This is the interesting one. It is a single file with the diagram, the pan
+      and zoom controls, the travelling highlights, and the Mermaid source folded
+      underneath. Email it to somebody with no tools installed and they can still
+      explore the diagram and read where it came from.
+    </p>
+
+    <h2>draw.io and Lucid</h2>
+    <p>
+      This export writes the model, not the picture: each node is a real shape
+      with real geometry, each edge a real connection between two of them, and
+      subgraphs are real containers. Open it in diagrams.net or import it into
+      Lucid and you can move things.
+    </p>
+    <div class="note">
+      <p><strong>It is a one-way trip.</strong> Once a diagram is edited in draw.io, the Mermaid source is no longer the source of truth. Export this way when you are handing over to somebody who does not write Mermaid, not as a round trip.</p>
+    </div>
+    <p>Available for graph-shaped diagrams — flowchart, class, ER, state, mindmap, requirement, C4 — since those are the ones with a model to export.</p>
+
+    <h2>Everything is frozen except the HTML</h2>
+    <p>
+      Static formats are captured still. A frozen frame of a travelling
+      highlight is not the diagram anyone meant to save, so the animation is
+      switched off for SVG, PNG and PDF. The HTML page keeps it, being the one
+      format that can move.
+    </p>
+
+    <nav class="next">
+      <a class="back" href="theming.html"><span>Back to</span><b>Theming</b></a>
+      <a href="use-cases.html"><span>Next</span><b>Use cases</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test'
+const browser = await chromium.launch()
+const page = await browser.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 })
+await page.goto('http://localhost:5173/?d=basic&theme=' + (process.argv[3] ?? 'clean-light'))
+await page.waitForSelector('[data-mp-ready="true"]', { timeout: 30000 })
+await page.locator('.mp-toolbar').getByRole('button', { name: 'Examples', exact: true }).click()
+await page.waitForSelector('.mp-sheet')
+await page.waitForTimeout(300)
+await page.screenshot({ path: process.argv[2] })
+const box = await page.locator('.mp-sheet-kinds').boundingBox()
+console.log('kinds row:', JSON.stringify(box), 'cards:', await page.locator('.mp-example-card').count())
+await browser.close()

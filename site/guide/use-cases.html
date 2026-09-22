@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Use cases — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html" aria-current="page">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 8</p>
+    <h1>Use cases</h1>
+    <p class="standfirst">
+      Five jobs people actually use this for, each with the source that does it.
+      Copy one, change the names, and you have the thing rather than an example
+      of the thing.
+    </p>
+
+    <h2>1 — An architecture document your team will read</h2>
+    <p class="who"><strong>The problem:</strong> the diagram in the wiki is two years old, nobody knows who owns what, and it is a PNG so nobody can fix it.</p>
+    <p>
+      Keep the diagram in the repository as text, next to the code it describes.
+      Put ownership in the file so it is reviewed like anything else. Collapse
+      the parts most readers do not need.
+    </p>
+<pre><b>flowchart LR</b>
+%%mp: theme slate-dark
+%%mp: group data <i>collapsed</i>
+  users[Customers] --&gt; cdn[Cloudflare CDN]
+  cdn --&gt; gw[Kong API Gateway]
+  gw --&gt; orders[Order Service]
+  <b>subgraph</b> data [Data platform]
+    orders --&gt; odb[(Orders DB)]
+    odb --&gt; etl[ETL Worker]
+  <b>end</b>
+  orders --&gt; q{{Order Events}}
+  q -.-&gt; fulfil[Fulfilment Worker]
+%%mp: node gw <i>note</i>="Every public request enters here. Terminates TLS
+  and rate limits per tenant." <i>owner</i>="Platform" <i>sla</i>="99.99%"
+%%mp: node orders <i>note</i>="Owns the order lifecycle. The only writer
+  to the orders schema." <i>owner</i>="Commerce" <i>tier</i>="1"</pre>
+    <p><strong>Then:</strong> export SVG into the wiki, or the standalone HTML page so readers can click around it.</p>
+
+    <h2>2 — Onboarding a new engineer</h2>
+    <p class="who"><strong>The problem:</strong> the architecture overview is forty boxes and means nothing to somebody on day two.</p>
+    <p>Add numbered steps. The diagram becomes a guided tour that a new joiner can take alone, at their pace, without booking anybody's time.</p>
+<pre>%%mp: step 1 <i>title</i>="Start at the edge" <i>focus</i>=users,cdn
+  <i>note</i>="Most catalogue reads never reach us at all."
+%%mp: step 2 <i>title</i>="One way in" <i>focus</i>=gw
+  <i>note</i>="Authentication, rate limiting and routing all happen here.
+  Nothing else is exposed."
+%%mp: step 3 <i>title</i>="Where orders live" <i>focus</i>=data
+  <i>note</i>="Naming a group focuses everything inside it."
+%%mp: step 4 <i>title</i>="Everything else is asynchronous" <i>focus</i>=q,fulfil
+%%mp: step 5 <i>title</i>="The whole picture"</pre>
+    <p><strong>Then:</strong> <kbd>⌘K</kbd> → <em>Present walkthrough</em>, or send them a link ending <code>?step=1</code>.</p>
+
+    <h2>3 — An incident postmortem</h2>
+    <p class="who"><strong>The problem:</strong> the timeline is in a doc, the system diagram is somewhere else, and the reader has to hold both in their head.</p>
+    <p>Two diagrams in one document. A timeline for what happened, and a flowchart of the path that broke, with the failure marked.</p>
+<pre><b>timeline</b>
+  <b>title</b> SEV-1 checkout outage, 4 September
+  <b>section</b> Detection
+    14.02 : order-service v4.18 deployed
+    14.06 : Checkout error rate crosses the SLO
+    14.09 : On-call paged
+  <b>section</b> Mitigation
+    14.31 : Rollback started
+    14.49 : Declared resolved</pre>
+    <p>And the path, with the cause where it actually was:</p>
+<pre><b>flowchart LR</b>
+  gw[API Gateway] --&gt; orders[Order Service]
+  orders --&gt; pool[(Connection pool)]
+  pool --&gt; db[(Orders DB)]
+%%mp: node pool <i>note</i>="Sized for the old query. The new one holds a
+  connection six times longer, so 200 connections were not enough."
+  <i>owner</i>="Commerce"</pre>
+    <p><strong>Then:</strong> PNG into the postmortem doc. The note travels with the source, so the next person to open the file sees the finding.</p>
+
+    <h2>4 — A design review</h2>
+    <p class="who"><strong>The problem:</strong> you are proposing a change and the reviewers cannot see what is different.</p>
+    <p>Two diagrams, same theme, same direction: before and after. Reviewers compare pictures instead of reading prose about pictures.</p>
+<pre><b>flowchart LR</b>
+%%mp: theme slate-dark
+  <b>subgraph</b> before [Today: synchronous]
+    a1[Checkout] --&gt; b1[Fraud check]
+    b1 --&gt; c1[Payment]
+    c1 --&gt; d1[Order created]
+  <b>end</b>
+  <b>subgraph</b> after [Proposed: scored asynchronously]
+    a2[Checkout] --&gt; c2[Payment]
+    c2 --&gt; d2[Order created]
+    d2 -.-&gt; q2{{Fraud events}}
+    q2 -.-&gt; b2[Fraud scoring]
+    b2 -.-&gt; r2[Review queue]
+  <b>end</b>
+%%mp: node b1 <i>note</i>="380ms at p99, on the critical path for every order."
+%%mp: node b2 <i>note</i>="Off the critical path. A flagged order is reviewed
+  within minutes rather than blocking the shopper."</pre>
+    <p><strong>Then:</strong> paste both into the RFC, or present them side by side in full-bleed.</p>
+
+    <h2>5 — A runbook that shows the decision</h2>
+    <p class="who"><strong>The problem:</strong> the runbook is a wall of numbered prose and it is 3am.</p>
+    <p>A flowchart of the decision, with the commands in the notes. Somebody half awake can follow a picture.</p>
+<pre><b>flowchart TD</b>
+  start([Alert: checkout p99 above SLO]) --&gt; recent{Deploy in the last 30 min?}
+  recent --&gt;|yes| rollback[Roll back]
+  recent --&gt;|no| pool{Connection pool saturated?}
+  pool --&gt;|yes| scale[Scale the pool and the replicas]
+  pool --&gt;|no| upstream{Payment provider degraded?}
+  upstream --&gt;|yes| failover[Fail over to the secondary provider]
+  upstream --&gt;|no| escalate[Escalate to the secondary on-call]
+  rollback --&gt; verify{Recovered?}
+  scale --&gt; verify
+  failover --&gt; verify
+  verify --&gt;|no| escalate
+  verify --&gt;|yes| done([Monitor for 30 minutes])
+%%mp: node rollback <i>note</i>="kubectl rollout undo deploy/order-service
+  Takes about four minutes to drain."
+%%mp: node failover <i>note</i>="Flip payments.provider to secondary.
+  No deploy needed, effective in seconds."</pre>
+    <p><strong>Then:</strong> the standalone HTML page, pinned in the incident channel. It works with no tools installed and the notes are one click away.</p>
+
+    <div class="note">
+      <p><strong>The pattern in all five:</strong> the diagram lives as text, next to what it describes, and the explanation lives in the same file. That is the thing a drawing tool cannot give you.</p>
+    </div>
+
+    <nav class="next">
+      <a class="back" href="exporting.html"><span>Back to</span><b>Exporting</b></a>
+      <a href="reference.html"><span>Next</span><b>Reference</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

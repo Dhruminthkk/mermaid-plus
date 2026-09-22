@@ -1,0 +1,21 @@
+// Exports a diagram to standalone HTML and screenshots the result opened on its own.
+import { chromium } from '@playwright/test'
+import { writeFileSync } from 'node:fs'
+const [query = 'd=architecture', theme = 'clean-light', out = '/tmp/export'] = process.argv.slice(2)
+const browser = await chromium.launch()
+const ctx = await browser.newContext({ viewport: { width: 1200, height: 760 }, deviceScaleFactor: 1.5, acceptDownloads: true })
+const page = await ctx.newPage()
+await page.goto(`http://localhost:5173/?${query}&theme=${theme}`)
+await page.waitForSelector('[data-mp-ready="true"]', { timeout: 30000 })
+await page.locator('.mp-menu', { hasText: 'Export' }).locator('summary').click()
+const [dl] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'HTML page' }).click()])
+const fs = await import('node:fs/promises')
+const html = await fs.readFile(await dl.path(), 'utf8')
+writeFileSync(`${out}.html`, html)
+const p2 = await ctx.newPage()
+await p2.goto('data:text/html;charset=utf-8,' + encodeURIComponent(html))
+await p2.waitForSelector('#canvas > svg')
+await p2.waitForTimeout(300)
+await p2.screenshot({ path: `${out}.png` })
+console.log(`html ${(html.length / 1024).toFixed(0)} KB -> ${out}.html / ${out}.png`)
+await browser.close()

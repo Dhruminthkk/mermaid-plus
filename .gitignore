@@ -1,0 +1,20 @@
+node_modules
+dist
+.DS_Store
+*.local
+test-results
+playwright-report
+.superpowers/
+
+# Working notes, specs and plans: local only.
+docs
+# Rendered scene SVGs for the demo pages: regenerate with `npm run demo:scenes`.
+site/demo/scenes.json
+
+brag-output
+
+# A rendered export of a private client architecture — never publish.
+/image.png
+# Skill eval runs: agent outputs, local timings and absolute paths.
+.claude/skills/mermaid-plus-workspace/
+.claude/skills/mermaid-plus/evals/

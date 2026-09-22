@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test'
+const browser = await chromium.launch()
+const page = await browser.newPage()
+page.on('console', (m) => console.log(`[console.${m.type()}]`, m.text().slice(0, 400)))
+page.on('pageerror', (e) => console.log('[pageerror]', String(e).slice(0, 600)))
+page.on('requestfailed', (r) => console.log('[requestfailed]', r.url(), r.failure()?.errorText))
+await page.goto('http://localhost:5173/?d=' + (process.argv[2] ?? 'basic') + '')
+await page.waitForTimeout(4000)
+console.log('ready attr:', await page.locator('.mp-canvas-root').getAttribute('data-mp-ready'))
+console.log('error strip:', await page.locator('.mp-error-strip').textContent().catch(() => '(none)'))
+console.log('canvas text:', (await page.locator('.mp-canvas-root').innerText()).slice(0, 300))
+await browser.close()

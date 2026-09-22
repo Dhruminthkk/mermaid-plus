@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explaining a diagram — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html" aria-current="page">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 4</p>
+    <h1>Explaining a diagram</h1>
+    <p class="standfirst">
+      A diagram that needs you standing next to it is half a document. This is
+      how the other half goes into the same file — so it is still there in six
+      months, when you are not.
+    </p>
+
+    <h2>Click anything</h2>
+    <p>
+      Selecting a component lights up everything it touches and explains it along
+      the bottom: what it depends on, what depends on it, and whatever the author
+      wrote about it. The links are clickable, so you can walk the graph without
+      reading the source.
+    </p>
+    <figure>
+      <img src="images/selection.png" alt="A selected node with its neighbourhood highlighted and a panel explaining it" width="1280" height="780" loading="lazy">
+      <figcaption>The explanation sits along the bottom, out of the picture it is describing.</figcaption>
+    </figure>
+
+    <h2>Write the explanation into the source</h2>
+    <p>Any attribute you invent becomes metadata on the panel. A few conventional ones:</p>
+<pre>%%mp: node orders <i>note</i>="Owns the order lifecycle. The only writer
+  to the orders schema."
+  <i>owner</i>="Commerce" <i>tier</i>="1" <i>sla</i>="99.95%"
+
+%%mp: edge orders-&gt;psp <i>note</i>="Authorise only. Capture happens
+  from the fulfilment worker." <i>semantics</i>=async</pre>
+    <p>
+      Notes work on <code>node</code>, <code>edge</code> and <code>group</code>.
+      Because they are Mermaid comments, the file still renders in GitHub and
+      anywhere else — the notes are simply invisible there.
+    </p>
+
+    <div class="note">
+      <p><strong>Write the note for the reader who was not in the meeting.</strong> "Authorise only, capture happens at dispatch" earns its place. "Payment service" does not — the label already says that.</p>
+    </div>
+
+    <h2>Edges can mean different things</h2>
+    <p>
+      Mermaid's line styles already carry meaning, and the renderer keeps it: a
+      broken line is indirect, a thick line carries volume. You can also say it
+      outright:
+    </p>
+    <div class="wide"><table>
+      <thead><tr><th>Semantics</th><th>Reads as</th></tr></thead>
+      <tbody>
+        <tr><td><code>flow</code></td><td>A flows to B</td></tr>
+        <tr><td><code>async</code></td><td>A sends to B, without waiting</td></tr>
+        <tr><td><code>dependency</code></td><td>A depends on B</td></tr>
+        <tr><td><code>association</code></td><td>A is associated with B</td></tr>
+        <tr><td><code>inheritance</code></td><td>A inherits from B</td></tr>
+        <tr><td><code>composition</code></td><td>A is composed of B</td></tr>
+        <tr><td><code>bidirectional</code></td><td>Both ways</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>By keyboard</h2>
+    <p>
+      Click the canvas once, then use the arrow keys. They follow
+      <em>connections</em>, not the screen: from a fan-out, <kbd>→</kbd> takes the
+      branch that actually points right, and there is no jump to a node that
+      merely sits nearby. The panel narrates each step.
+    </p>
+    <div class="wide"><table>
+      <thead><tr><th>Key</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></td><td>Move to the connected node that way</td></tr>
+        <tr><td><kbd>Enter</kbd></td><td>Expand a collapsed group</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Clear the selection</td></tr>
+      </tbody>
+    </table></div>
+    <p>It is often faster than the mouse for tracing a dependency chain, and it is the only way in for anyone who does not use one.</p>
+
+    <h2>The editor and the canvas stay in step</h2>
+    <p>
+      Click a node and the editor scrolls to the line that declares it. Move the
+      cursor in the editor and the matching node highlights. A syntax error never
+      blanks the canvas — the last good render stays up while you fix the line.
+    </p>
+
+    <nav class="next">
+      <a class="back" href="large-systems.html"><span>Back to</span><b>Large systems</b></a>
+      <a href="presenting.html"><span>Next</span><b>Presenting</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test'
+const [out, theme = 'clean-light', step = '2'] = process.argv.slice(2)
+const browser = await chromium.launch()
+const page = await browser.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 })
+await page.goto(`http://localhost:5173/?d=walkthrough&theme=${theme}&step=${step}`)
+await page.waitForSelector('[data-mp-ready="true"]', { timeout: 30000 })
+await page.waitForSelector('.monaco-editor', { timeout: 20000 })
+await page.waitForSelector('.mp-wt-note')
+await page.waitForTimeout(700)
+await page.screenshot({ path: out })
+console.log('saved', out)
+await browser.close()

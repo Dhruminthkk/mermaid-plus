@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting started — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html" aria-current="page">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 1</p>
+    <h1>Getting started</h1>
+    <p class="standfirst">
+      Three lines and you have a diagram. The page starts empty on purpose:
+      arriving at somebody else's flowchart makes your first move
+      "select all, delete".
+    </p>
+
+    <figure>
+      <img src="images/blank.png" alt="An empty editor with an invitation to start typing" width="1280" height="780" loading="lazy">
+      <figcaption>The first screen: an empty editor on the left, an invitation on the right.</figcaption>
+    </figure>
+
+    <h2>Write three lines</h2>
+    <p>Type on the left. The diagram appears as you go — an edit lands in about 65 milliseconds, so it keeps up with you.</p>
+
+<pre><b>flowchart LR</b>
+  a[Client] --&gt; b[API]
+  b --&gt; c[(Database)]</pre>
+
+    <figure>
+      <img src="images/first-diagram.png" alt="Three lines of Mermaid rendered as a diagram" width="1280" height="780" loading="lazy">
+      <figcaption>Three lines in, and the shapes and colours are already chosen for you.</figcaption>
+    </figure>
+
+    <p>
+      That is ordinary Mermaid. Anything you already have — from GitHub, from a
+      wiki, from a colleague — pastes in and renders. Twenty diagram kinds are
+      supported, which is every kind Mermaid has.
+    </p>
+
+    <h2>Start from something real instead</h2>
+    <p>
+      There are 210 examples, all of them systems people actually build: OAuth
+      with PKCE, a canary release, an incident timeline, a multi-tenant schema.
+      Two ways in:
+    </p>
+    <ol class="steps">
+      <li><p>Press <kbd>⌘K</kbd> and type what you are after — <code>auth</code>, <code>kubernetes</code>, <code>postmortem</code>.</p></li>
+      <li><p>Or click the grid icon in the toolbar to browse them by kind.</p></li>
+    </ol>
+
+    <figure>
+      <img src="images/gallery-examples.png" alt="The example browser, showing cards for each example" width="1280" height="780" loading="lazy">
+      <figcaption>The example browser. Filter by diagram kind down the left.</figcaption>
+    </figure>
+
+    <div class="note">
+      <p><strong>Getting back to blank.</strong> Library menu → <em>New diagram</em>, or <kbd>⌘K</kbd> → <em>New diagram</em>. It asks first if there is anything to lose.</p>
+    </div>
+
+    <h2>Your work is kept</h2>
+    <p>
+      The document you are editing is saved to this browser as you type, so
+      closing the tab does not lose it. <em>Save to library</em> keeps a named
+      copy. Both live in this browser only — there is nowhere else for them to go.
+    </p>
+
+    <nav class="next">
+      <a class="back" href="index.html"><span>Back to</span><b>Contents</b></a>
+      <a href="shapes-and-icons.html"><span>Next</span><b>Shapes and icons</b></a>
+      <a href="use-cases.html"><span>Or skip to</span><b>Use cases</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

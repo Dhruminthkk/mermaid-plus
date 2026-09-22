@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html" aria-current="page">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 9</p>
+    <h1>Reference</h1>
+    <p class="standfirst">
+      Every directive and every key, in one place. All of them are Mermaid
+      comments, so a file that uses them still renders in GitHub, Notion and
+      stock mermaid.js — the extensions cost you no portability.
+    </p>
+
+    <h2>Directives</h2>
+    <div class="wide"><table>
+      <thead><tr><th>Directive</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td><code>theme &lt;id&gt;</code></td><td>Pin a theme. <code>&lt;family&gt;-light</code> or <code>-dark</code> for clean, slate, blueprint, notebook, vivid, contrast, paper, mono, terminal, ocean</td></tr>
+        <tr><td><code>node &lt;id&gt; archetype=&lt;a&gt;</code></td><td>service, database, queue, storage, user, external, process, decision, note, default</td></tr>
+        <tr><td><code>node &lt;id&gt; icon=&lt;ref&gt;</code></td><td><code>general:</code>, <code>tech:</code>, <code>aws:</code>, <code>gcp:</code>, <code>azure:</code>, <code>k8s:</code> plus a name — or <code>none</code></td></tr>
+        <tr><td><code>node &lt;id&gt; note="…"</code></td><td>Prose shown when a reader selects it. Works on <code>edge</code> and <code>group</code> too</td></tr>
+        <tr><td><code>node &lt;id&gt; &lt;key&gt;="…"</code></td><td>Any other attribute shows as metadata — owner, team, sla, whatever you need</td></tr>
+        <tr><td><code>edge &lt;a&gt;-&gt;&lt;b&gt; semantics=&lt;s&gt;</code></td><td>flow, async, dependency, association, inheritance, composition, bidirectional</td></tr>
+        <tr><td><code>edge &lt;a&gt;-&gt;&lt;b&gt; flow</code></td><td>Force the travelling highlight on one edge. <code>flow=false</code> takes it off</td></tr>
+        <tr><td><code>group &lt;id&gt; collapsed</code></td><td>Start a subgraph collapsed</td></tr>
+        <tr><td><code>layout direction=&lt;d&gt;</code></td><td>DOWN, RIGHT, UP, LEFT — or TB, LR, BT, RL</td></tr>
+        <tr><td><code>layout edgeLabels=beside</code></td><td>Move edge labels off the line. They sit on it by default</td></tr>
+        <tr><td><code>layout flow=&lt;all|auto|none&gt;</code></td><td>Which edges carry a travelling highlight</td></tr>
+        <tr><td><code>layout motion=off</code></td><td>Still this diagram entirely</td></tr>
+        <tr><td><code>step &lt;n&gt; focus=&lt;ids&gt; title="…" note="…"</code></td><td>One step of a walkthrough. A group name focuses everything inside it; no focus is a title card</td></tr>
+      </tbody>
+    </table></div>
+    <p>Values may be quoted, so a note can be a whole sentence. Several settings can share one <code>layout</code> line, or sit on separate lines — they are merged.</p>
+
+    <h2>Keyboard</h2>
+    <div class="wide"><table>
+      <thead><tr><th>Key</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>⌘K</kbd> / <kbd>Ctrl K</kbd></td><td>Search examples, themes and actions</td></tr>
+        <tr><td><kbd>F</kbd></td><td>Full-bleed. Typing an f in the editor still means the letter f</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Clear the selection, leave full-bleed, end a walkthrough, close a menu</td></tr>
+        <tr><td><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></td><td>Follow connections — or advance a walkthrough while one is running</td></tr>
+        <tr><td><kbd>Enter</kbd></td><td>Expand the selected collapsed group</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>URL parameters</h2>
+    <div class="wide"><table>
+      <thead><tr><th>Parameter</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><code>?ex=flowchart:0</code></td><td>Open an example by kind and index</td></tr>
+        <tr><td><code>?theme=slate-dark</code></td><td>Open with a theme selected</td></tr>
+        <tr><td><code>?step=3</code></td><td>Start a walkthrough at a given step</td></tr>
+        <tr><td><code>?gallery</code></td><td>The example gallery instead of the editor</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Diagram kinds</h2>
+    <p>
+      <strong>Drawn by the custom engine:</strong> flowchart, class, state, entity
+      relationship, mindmap, requirement, C4. These get real layout, archetypes,
+      icons, collapsing, focus and the draw.io export.
+    </p>
+    <p>
+      <strong>Drawn by mermaid.js in the same theme:</strong> sequence, gantt, pie,
+      timeline, journey, git graph, quadrant, XY chart, sankey, block, kanban,
+      packet, architecture. They match the rest of your document, and new kinds
+      work the day the dependency is updated.
+    </p>
+
+    <h2>Archetypes</h2>
+    <div class="wide"><table>
+      <thead><tr><th>Archetype</th><th>Drawn as</th></tr></thead>
+      <tbody>
+        <tr><td>service</td><td>Rounded box, server glyph</td></tr>
+        <tr><td>database</td><td>Cylinder</td></tr>
+        <tr><td>queue</td><td>Hexagon</td></tr>
+        <tr><td>storage</td><td>Box with a band</td></tr>
+        <tr><td>user</td><td>Stadium</td></tr>
+        <tr><td>external</td><td>Dashed border</td></tr>
+        <tr><td>decision</td><td>Diamond</td></tr>
+        <tr><td>note</td><td>Folded corner</td></tr>
+        <tr><td>process, default</td><td>Whatever bracket shape you wrote</td></tr>
+      </tbody>
+    </table></div>
+
+    <nav class="next">
+      <a class="back" href="use-cases.html"><span>Back to</span><b>Use cases</b></a>
+      <a href="index.html"><span>Back to</span><b>Contents</b></a>
+      <a href="getting-started.html"><span>Or</span><b>Getting started</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

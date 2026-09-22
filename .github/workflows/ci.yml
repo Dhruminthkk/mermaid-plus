@@ -1,0 +1,67 @@
+name: CI
+on:
+  push:
+    branches: [main, m1-render-skeleton]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      # Screenshot baselines are recorded on macOS; on Linux run the functional e2e only.
+      - run: npx playwright test --grep-invert "renders identically|showcase in"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: test-results
+
+  pages:
+    needs: test
+    # Opt-in, for two reasons: Pages is free on public repositories only, and a
+    # repository with Pages switched off fails this job on every push to main.
+    # To publish, enable Pages (Settings > Pages > Source: GitHub Actions) and
+    # set the repository variable DEPLOY_PAGES to true.
+    if: >-
+      github.ref == 'refs/heads/main'
+      && github.event.repository.private == false
+      && vars.DEPLOY_PAGES == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      # Naming any permission drops every one that is not listed, so checkout
+      # loses `contents` and reports the repository as not found. It has to be
+      # spelled out alongside the two Pages needs.
+      contents: read
+      pages: write
+      id-token: write
+    # One deploy at a time; a queued run should replace a pending one rather
+    # than race it.
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

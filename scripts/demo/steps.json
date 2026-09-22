@@ -1,0 +1,279 @@
+{
+  "desktop": [
+    {
+      "ms": 4400,
+      "act": "wiki",
+      "pic": "stale"
+    },
+    {
+      "ms": 4400,
+      "act": "wiki",
+      "pic": "stale",
+      "title": [
+        "This was right in March."
+      ]
+    },
+    {
+      "ms": 5000,
+      "act": "wiki",
+      "pic": "stale",
+      "cam": {
+        "s": 1.7,
+        "x": -23.5,
+        "y": -22.4
+      },
+      "callout": {
+        "x": 8,
+        "y": 76,
+        "text": "replaced in June",
+        "width": 64
+      },
+      "title": [
+        "This was right in March."
+      ]
+    },
+    {
+      "ms": 4600,
+      "act": "wiki",
+      "pic": "stale",
+      "cam": {
+        "s": 3.0,
+        "x": -6.7,
+        "y": 2.7
+      },
+      "title": [
+        "It's a <em>PNG</em>."
+      ]
+    },
+    {
+      "ms": 4600,
+      "act": "wiki",
+      "pic": "stale",
+      "cam": {
+        "s": 1.7,
+        "x": -23.5,
+        "y": -22.4
+      },
+      "title": [
+        "Nobody can fix it."
+      ]
+    },
+    {
+      "ms": 5400,
+      "act": "turn",
+      "pic": null,
+      "code": [
+        "flowchart LR",
+        "  users[Customers] --> lb[Load Balancer]",
+        "  lb --> web[Web Frontend]",
+        "  web --> api[Orders API]",
+        "  api --> pg[(PostgreSQL)]",
+        "  api --> redis[(Redis Cache)]",
+        "  api --> solr[Solr Search]",
+        "  api --> cron[Cron Runner]"
+      ],
+      "title": [
+        "It was always text."
+      ]
+    },
+    {
+      "ms": 6400,
+      "act": "turn",
+      "pic": null,
+      "code": [
+        "flowchart LR",
+        "  users[Customers] --> lb[Load Balancer]",
+        "  lb --> web[Web Frontend]",
+        "  web --> api[Orders API]",
+        "  api --> pg[(PostgreSQL)]",
+        "  api --> redis[(Redis Cache)]",
+        "  api --> solr[Solr Search]",
+        "  api --> cron[Cron Runner]"
+      ],
+      "edits": [
+        {
+          "line": 7,
+          "cut": true,
+          "at": 900
+        },
+        {
+          "line": 6,
+          "from": "Solr Search]",
+          "to": "Elasticsearch]",
+          "at": 2400
+        }
+      ],
+      "title": [
+        "Anyone can fix <em>a line</em>."
+      ]
+    },
+    {
+      "ms": 5000,
+      "act": "alive",
+      "pic": "fresh",
+      "draw": true
+    },
+    {
+      "ms": 5000,
+      "act": "alive",
+      "pic": "fresh",
+      "title": [
+        "Same system.",
+        "Right this time."
+      ]
+    },
+    {
+      "ms": 4600,
+      "act": "alive",
+      "pic": "fresh",
+      "cam": {
+        "s": 1.7,
+        "x": -8,
+        "y": 4
+      },
+      "title": [
+        "And it stays right."
+      ],
+      "sub": "Because it is a file in your repository, reviewed like anything else."
+    },
+    {
+      "ms": 5600,
+      "act": "alive",
+      "pic": "fresh",
+      "dim": 0.8,
+      "title": [
+        "Diagrams rot.",
+        "<em>Text</em> does not."
+      ]
+    },
+    {
+      "ms": 5400,
+      "act": "alive",
+      "pic": null,
+      "close": true
+    }
+  ],
+  "mobile": [
+    {
+      "ms": 3600,
+      "act": "wiki",
+      "pic": "stale"
+    },
+    {
+      "ms": 4000,
+      "act": "wiki",
+      "pic": "stale",
+      "title": [
+        "This was right",
+        "in March."
+      ]
+    },
+    {
+      "ms": 4200,
+      "act": "wiki",
+      "pic": "stale",
+      "cam": {
+        "s": 2.6,
+        "x": -7.7,
+        "y": 3.3
+      },
+      "title": [
+        "It's a <em>PNG</em>."
+      ]
+    },
+    {
+      "ms": 4000,
+      "act": "wiki",
+      "pic": "stale",
+      "cam": {
+        "s": 2.6,
+        "x": -7.7,
+        "y": 3.3
+      },
+      "title": [
+        "Nobody can fix it."
+      ]
+    },
+    {
+      "ms": 4600,
+      "act": "turn",
+      "pic": null,
+      "code": [
+        "flowchart LR",
+        "  users[Customers] --> lb[Load Balancer]",
+        "  lb --> web[Web Frontend]",
+        "  web --> api[Orders API]",
+        "  api --> pg[(PostgreSQL)]",
+        "  api --> redis[(Redis Cache)]",
+        "  api --> solr[Solr Search]",
+        "  api --> cron[Cron Runner]"
+      ],
+      "title": [
+        "It was always text."
+      ]
+    },
+    {
+      "ms": 6000,
+      "act": "turn",
+      "pic": null,
+      "code": [
+        "flowchart LR",
+        "  users[Customers] --> lb[Load Balancer]",
+        "  lb --> web[Web Frontend]",
+        "  web --> api[Orders API]",
+        "  api --> pg[(PostgreSQL)]",
+        "  api --> redis[(Redis Cache)]",
+        "  api --> solr[Solr Search]",
+        "  api --> cron[Cron Runner]"
+      ],
+      "edits": [
+        {
+          "line": 7,
+          "cut": true,
+          "at": 900
+        },
+        {
+          "line": 6,
+          "from": "Solr Search]",
+          "to": "Elasticsearch]",
+          "at": 2400
+        }
+      ],
+      "title": [
+        "Anyone can fix",
+        "<em>a line</em>."
+      ]
+    },
+    {
+      "ms": 4200,
+      "act": "alive",
+      "pic": "fresh",
+      "draw": true
+    },
+    {
+      "ms": 4400,
+      "act": "alive",
+      "pic": "fresh",
+      "title": [
+        "Same system.",
+        "Right this time."
+      ]
+    },
+    {
+      "ms": 4600,
+      "act": "alive",
+      "pic": "fresh",
+      "dim": 0.8,
+      "title": [
+        "Diagrams rot.",
+        "<em>Text</em> does not."
+      ]
+    },
+    {
+      "ms": 4400,
+      "act": "alive",
+      "pic": null,
+      "close": true
+    }
+  ]
+}

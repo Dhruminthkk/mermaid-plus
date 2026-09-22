@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mermaid Plus</title>
+<meta name="description" content="Write Mermaid. Get a diagram worth showing. Runs entirely in your browser — nothing is uploaded.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root {
+  color-scheme: dark;
+  --ground: #0b0e16;
+  --surface: #141926;
+  --sunken: #0f131e;
+  --ink: #e7e9f0;
+  --muted: #969db2;
+  --faint: #6a7189;
+  --line: #222839;
+  --accent: #38cfe0;
+  --accent-soft: #38cfe01f;
+  --signal: #d9a441;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --shadow: 0 1px 2px #0006, 0 16px 40px -16px #000a;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 400 16px/1.65 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+/* ── Masthead ─────────────────────────────────────────────────────────── */
+.masthead {
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 26px 0 0;
+}
+.wordmark { font: 600 15px/1 var(--mono); letter-spacing: -.02em; }
+.wordmark span { color: var(--accent); }
+.masthead .tag {
+  font: 400 12px/1 var(--mono); color: var(--faint);
+  letter-spacing: .04em;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero { padding: 54px 0 8px; display: grid; gap: 34px; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; }
+@media (max-width: 900px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+
+.hero h1 {
+  margin: 0 0 18px;
+  font: 600 clamp(30px, 4.2vw, 46px)/1.08 var(--mono);
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: normal; color: var(--accent); }
+.lede { margin: 0 0 22px; max-width: 46ch; font-size: 17.5px; color: var(--muted); }
+.lede strong { color: var(--ink); font-weight: 500; }
+
+.source {
+  background: var(--sunken);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 15px 17px;
+  font: 400 13px/1.75 var(--mono);
+  color: var(--muted);
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 2;
+}
+.source b { color: var(--ink); font-weight: 500; }
+.source i { color: var(--accent); font-style: normal; }
+.caret {
+  display: inline-block; width: 7px; height: 1.05em; margin-bottom: -.18em;
+  background: var(--accent); animation: blink 1.15s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .caret { animation: none; } }
+
+.shot {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--surface);
+}
+
+.cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 26px; }
+.btn {
+  display: inline-block; padding: 11px 20px; border-radius: 3px;
+  font: 500 14px/1 var(--sans); text-decoration: none;
+  background: var(--accent); color: var(--ground);
+  border: 1px solid var(--accent);
+}
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn:hover { filter: brightness(1.08); }
+.cta .note { font: 400 13px/1.4 var(--mono); color: var(--faint); }
+
+/* ── Facts strip ──────────────────────────────────────────────────────── */
+.facts {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px; margin: 64px 0 0;
+  background: var(--line); border: 1px solid var(--line);
+}
+@media (max-width: 760px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.fact { background: var(--ground); padding: 18px 20px; }
+.fact dt { font: 500 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.fact dd { margin: 9px 0 0; font: 400 14px/1.45 var(--sans); color: var(--muted); }
+.fact dd b { display: block; font: 600 21px/1.2 var(--mono); color: var(--ink); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+
+/* ── Pipeline sections ────────────────────────────────────────────────── */
+.pipeline { margin: 92px 0 0; }
+.pipeline > h2 {
+  margin: 0 0 8px; font: 600 12px/1 var(--mono);
+  letter-spacing: .14em; text-transform: uppercase; color: var(--faint);
+}
+.pipeline > p { margin: 0 0 44px; max-width: 62ch; color: var(--muted); }
+
+.step { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 34px; align-items: start; padding: 40px 0; border-top: 1px solid var(--line); }
+@media (max-width: 900px) { .step { grid-template-columns: minmax(0, 1fr); gap: 22px; } }
+.step-no {
+  font: 500 11px/1 var(--mono); letter-spacing: .12em;
+  color: var(--accent); margin: 0 0 12px;
+}
+.step h3 { margin: 0 0 10px; font: 600 22px/1.2 var(--mono); letter-spacing: -.028em; text-wrap: balance; }
+.step p { margin: 0 0 16px; color: var(--muted); max-width: 52ch; }
+.step p:last-child { margin-bottom: 0; }
+.step .source { margin-top: 4px; }
+.step em { font-style: normal; color: var(--ink); font-weight: 500; }
+
+/* ── Formats ──────────────────────────────────────────────────────────── */
+.formats { margin: 96px 0 0; }
+.formats h2 { margin: 0 0 6px; font: 600 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.formats > p { margin: 0 0 26px; max-width: 62ch; color: var(--muted); }
+.format-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.format-table th {
+  text-align: left; padding: 0 14px 10px 0;
+  font: 500 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint);
+  border-bottom: 1px solid var(--line);
+}
+.format-table td { padding: 13px 14px 13px 0; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--muted); }
+.format-table td:first-child { font: 500 14px/1.5 var(--mono); color: var(--ink); white-space: nowrap; }
+
+/* ── Privacy note ─────────────────────────────────────────────────────── */
+.privacy {
+  margin: 96px 0 0; padding: 30px 32px;
+  background: var(--accent-soft);
+  border-left: 2px solid var(--accent);
+}
+.privacy h2 { margin: 0 0 10px; font: 600 21px/1.25 var(--mono); letter-spacing: -.025em; }
+.privacy p { margin: 0; max-width: 62ch; color: var(--muted); }
+.privacy p + p { margin-top: 12px; }
+
+.problem { margin: 74px 0 0; max-width: 62ch; }
+.problem h2 { margin: 0 0 14px; font: 600 25px/1.22 var(--mono); letter-spacing: -.03em; text-wrap: balance; }
+.problem p { margin: 0 0 14px; color: var(--muted); }
+.problem .turn { margin: 0; color: var(--ink); font-weight: 500; }
+
+.versus-section { margin: 96px 0 0; }
+.versus-section h2 { margin: 0 0 8px; font: 600 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.versus-section > p { margin: 0 0 24px; max-width: 62ch; color: var(--muted); }
+table.versus { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+table.versus th { text-align: left; padding: 0 16px 10px 0; font: 500 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); border-bottom: 1px solid var(--line); }
+table.versus td { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.versus td:first-child { font: 500 13.5px/1.5 var(--mono); color: var(--ink); white-space: nowrap; width: 15%; }
+table.versus td:nth-child(2) { color: var(--faint); width: 30%; }
+table.versus td:last-child { color: var(--muted); }
+table.versus tr:last-child td { border-bottom: 0; }
+.versus-section .aside { margin: 20px 0 0; max-width: 62ch; font-size: 14.5px; color: var(--faint); }
+.versus-section code { font: 400 .9em/1.5 var(--mono); background: var(--sunken); padding: 1.5px 5px; border-radius: 3px; }
+
+.close { margin: 96px 0 0; padding-top: 34px; border-top: 1px solid var(--line); }
+.close h2 { margin: 0 0 12px; font: 600 25px/1.22 var(--mono); letter-spacing: -.03em; text-wrap: balance; }
+.close p { margin: 0; max-width: 58ch; color: var(--muted); }
+.close .cta { margin-top: 22px; }
+
+footer { margin: 76px 0 0; padding: 26px 0 44px; border-top: 1px solid var(--line); }
+footer p { margin: 0; font: 400 13px/1.6 var(--mono); color: var(--faint); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="wordmark">Mermaid<span>Plus</span></div>
+    <div class="tag">the same files, drawn properly</div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>Write Mermaid.<br>Get a diagram <em>worth showing.</em></h1>
+      <p class="lede">
+        The syntax you already write, rendered the way you wish it were. Real
+        layout, shapes that mean something, and
+        <strong>nothing uploaded — ever.</strong>
+      </p>
+<pre class="source"><b>flowchart LR</b>
+  shopper[Shopper] --&gt; cdn[<i>Cloudflare CDN</i>]
+  cdn --&gt; gw[<i>Kong API Gateway</i>]
+  gw --&gt; orders[Orders API]
+  orders --&gt; pg[(<i>PostgreSQL</i>)]
+  orders --&gt; kafka{{<i>Kafka</i>}}
+  kafka -.-&gt; worker[Fulfilment Worker]<span class="caret"></span></pre>
+      <div class="cta">
+        <a class="btn" href="/">Open the app</a>
+        <a class="btn ghost" href="demo/index.html">Watch the film</a>
+        <span class="note">60 seconds, no signup</span>
+      </div>
+    </div>
+    <div class="shot"><img src="images/hero.png" alt="The app showing that source rendered as a diagram, with vendor icons on each node" width="1280" height="800"></div>
+  </section>
+
+  <section class="problem">
+    <h2>Why the diagram in your wiki is wrong</h2>
+    <p>
+      It was accurate eighteen months ago. It is a PNG, so the one person who
+      spotted the mistake could not fix it. Whoever drew it has left, and half
+      the boxes have no owner any more.
+    </p>
+    <p>
+      Diagrams rot because editing them is somebody else's job. Text does not
+      have that problem — a diagram in your repository gets reviewed like code,
+      and anyone can correct a line. The catch has always been that the result
+      looked like a draft.
+    </p>
+    <p class="turn">That is the only part this changes.</p>
+  </section>
+
+  <dl class="facts">
+    <div class="fact"><dt>Diagram kinds</dt><dd><b>20</b>every one Mermaid supports</dd></div>
+    <div class="fact"><dt>Themes</dt><dd><b>20</b>light and dark, contrast-tested</dd></div>
+    <div class="fact"><dt>Edit to redraw</dt><dd><b>65ms</b>on a typical diagram</dd></div>
+    <div class="fact"><dt>Uploaded</dt><dd><b>0 bytes</b>there is no server</dd></div>
+  </dl>
+
+  <section class="pipeline">
+    <h2>What it does with your text</h2>
+    <p>
+      Six things happen between the line you type and the picture you show. Each
+      one is worth a look, because each one is work you would otherwise do by
+      hand in a drawing tool.
+    </p>
+
+    <article class="step">
+      <div>
+        <p class="step-no">01 — Read</p>
+        <h3>It infers what things are</h3>
+        <p>
+          A node called <em>PostgreSQL</em> becomes a database cylinder wearing the
+          Postgres mark. <em>Kafka</em> becomes a queue. Anything ending
+          <em>external</em> gets a dashed border. Nothing in the diagram opposite
+          was annotated by hand.
+        </p>
+        <p>Override any of it, and the file still renders in GitHub:</p>
+<pre class="source">%%mp: node api <i>archetype</i>=service <i>icon</i>=aws:lambda</pre>
+      </div>
+      <div class="shot"><img src="images/infer.png" alt="Nodes drawn with inferred shapes, colours and vendor icons" width="1280" height="800" loading="lazy"></div>
+    </article>
+
+    <article class="step">
+      <div>
+        <p class="step-no">02 — Lay out</p>
+        <h3>Groups nest, edges route, nothing overlaps</h3>
+        <p>
+          Subgraphs are real containers, not rectangles drawn behind things.
+          Edges take orthogonal routes with reserved space for their labels.
+          Five hundred nodes lay out in under a tenth of a second.
+        </p>
+        <p>
+          Collapse a group and the edges that crossed its boundary bundle into
+          one, carrying a count — so a large system reads at the level you need.
+        </p>
+<pre class="source">%%mp: group data <i>collapsed</i></pre>
+      </div>
+      <div class="shot"><img src="images/collapse.png" alt="A platform diagram with two subgraphs collapsed into single nodes" width="1280" height="800" loading="lazy"></div>
+    </article>
+
+    <article class="step">
+      <div>
+        <p class="step-no">03 — Explain</p>
+        <h3>Click anything and it tells you what it is</h3>
+        <p>
+          Selecting a component lights up everything it touches and explains it
+          along the bottom: what depends on it, what it depends on, and whatever
+          the author wrote as a note. The links are clickable, so you can walk
+          the graph without reading the source.
+        </p>
+        <p>Arrow keys do the same thing, following connections rather than the screen.</p>
+<pre class="source">%%mp: node orders <i>note</i>="Owns the order lifecycle."
+  <i>owner</i>="Commerce" <i>sla</i>="99.95%"</pre>
+      </div>
+      <div class="shot"><img src="images/explain.png" alt="A selected node with its neighbourhood highlighted and a panel explaining it" width="1280" height="800" loading="lazy"></div>
+    </article>
+
+    <article class="step">
+      <div>
+        <p class="step-no">04 — Present</p>
+        <h3>The diagram walks people through itself</h3>
+        <p>
+          Number a few steps and it becomes a presentation: each step frames what
+          it names, dims the rest, and shows its note. One key drops every piece
+          of chrome so the diagram takes the whole screen.
+        </p>
+        <p>
+          A highlight travels the edges in dependency order — an edge lights as
+          the one feeding it lands — so the picture moves the way a request does.
+        </p>
+<pre class="source">%%mp: step 1 <i>title</i>="A shopper arrives" <i>focus</i>=shopper,cdn</pre>
+      </div>
+      <div class="shot"><img src="images/present.png" alt="Sixty services filling the screen with no interface around them" width="1280" height="800" loading="lazy"></div>
+    </article>
+
+    <article class="step">
+      <div>
+        <p class="step-no">05 — Theme</p>
+        <h3>Twenty themes, and the tokens behind them</h3>
+        <p>
+          Clean, Slate, Blueprint, Notebook, Vivid, Contrast, Paper, Mono,
+          Terminal, Ocean — each in light and dark. Every text and fill pair is
+          contrast-checked by a test, as is the canvas against the nodes standing
+          on it.
+        </p>
+        <p>Edit the tokens directly and export the result as JSON, or pin one to a document.</p>
+<pre class="source">%%mp: theme slate-dark</pre>
+      </div>
+      <div class="shot"><img src="images/themes.png" alt="The theme picker open beside a diagram, showing twenty preview cards" width="1280" height="800" loading="lazy"></div>
+    </article>
+  </section>
+
+  <section class="versus-section">
+    <h2>Against stock Mermaid</h2>
+    <p>
+      Every extension is written as a <code>%%</code> comment, so a file that
+      uses them still renders in GitHub, Notion and mermaid.js itself. Nothing
+      here is traded for anything.
+    </p>
+    <div class="wide">
+      <table class="versus">
+        <thead><tr><th></th><th>mermaid.js</th><th>Here</th></tr></thead>
+        <tbody>
+          <tr><td>Layout</td><td>Dagre. Subgraphs sit behind their contents</td><td>ELK layered. Subgraphs are containers the layout understands, edges route orthogonally with space kept for their labels</td></tr>
+          <tr><td>Appearance</td><td>The bracket shape you typed</td><td>Shape, colour and icon inferred from the label — a cylinder for a database, a dashed border for anything external, ninety technology marks</td></tr>
+          <tr><td>Big diagrams</td><td>Everything is drawn, every time</td><td>Collapse a subgraph and its crossing edges bundle with a count. Focus by hop radius, find by name, draw only what is on screen</td></tr>
+          <tr><td>Reading one</td><td>Read the source</td><td>Click a component for what it depends on, what depends on it, and the note the author left</td></tr>
+          <tr><td>Presenting one</td><td>A picture</td><td>Numbered steps frame it a part at a time. One key clears every piece of interface</td></tr>
+          <tr><td>Export</td><td>SVG and PNG</td><td>Those, plus PDF, a standalone interactive page, and a draw.io file that is a model rather than a picture</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="aside">
+      Thirteen diagram kinds — sequence, gantt, pie, journey, git graph and the
+      rest — are still drawn by mermaid.js, wearing the same theme as everything
+      else. A new upstream kind works the day the dependency is updated.
+    </p>
+  </section>
+
+  <section class="formats">
+    <h2>06 — Take it away</h2>
+    <p>Every format is the same picture. Any of them with a clear background.</p>
+    <table class="format-table">
+      <thead><tr><th>Format</th><th>What it is for</th></tr></thead>
+      <tbody>
+        <tr><td>SVG</td><td>Docs and wikis. Styles inlined, no CSS variables left to resolve</td></tr>
+        <tr><td>PNG 1× 2× 4×</td><td>Slides, issues, anywhere that wants pixels</td></tr>
+        <tr><td>PDF</td><td>Print and attachments</td></tr>
+        <tr><td>HTML page</td><td>A standalone file that keeps pan, zoom, the motion, and the source it came from</td></tr>
+        <tr><td>draw.io / Lucid</td><td>Real shapes and connections — still editable on the other side, not a picture</td></tr>
+        <tr><td>Copy as image</td><td>Straight into Slack or a doc</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="privacy">
+    <h2>Your architecture never leaves the browser</h2>
+    <p>
+      Parsing, layout, rendering and export all run on your machine. There is no
+      account, no upload, and no server holding a copy of how your systems fit
+      together — which is the part most diagram tools ask you to hand over.
+    </p>
+    <p>
+      It is not a promise in a policy document. It is a property of the build,
+      and a test asserts it.
+    </p>
+  </section>
+
+  <section class="close">
+    <h2>Try it on a diagram you already have</h2>
+    <p>
+      Paste it in. If it is Mermaid, it renders — and you will see in about three
+      seconds whether any of this is worth your time.
+    </p>
+    <div class="cta">
+      <a class="btn" href="/">Open the app</a>
+      <a class="btn ghost" href="guide/index.html">Read the guide</a>
+      <span class="note">no account, nothing to install</span>
+    </div>
+  </section>
+
+  <footer>
+    <p>Mermaid Plus — <a href="guide/index.html">guide</a> · <a href="demo/index.html">demo</a> · <a href="/?gallery">210 examples</a> · <a href="/">open the app</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

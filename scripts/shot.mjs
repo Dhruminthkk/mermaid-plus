@@ -1,0 +1,11 @@
+import { chromium } from '@playwright/test'
+const [entry = 'platform', theme = 'slate-light', out = '/tmp/shot.png'] = process.argv.slice(2)
+const browser = await chromium.launch()
+const page = await browser.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 })
+await page.goto(`http://localhost:5173/?d=${entry}&theme=${theme}`)
+await page.waitForSelector('[data-mp-ready="true"]', { timeout: 60000 })
+await page.waitForSelector('.monaco-editor', { timeout: 20000 })
+await page.waitForTimeout(300)
+await page.screenshot({ path: out })
+console.log('saved', out)
+await browser.close()

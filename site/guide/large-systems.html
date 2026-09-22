@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Large systems — Mermaid Plus guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="wordmark" href="../index.html">Mermaid<span>Plus</span></a>
+    <h2>Guide</h2>
+    <ol>
+      <li><a href="index.html">Contents</a></li>
+    </ol>
+    <ol class="numbered">
+        <li><a href="getting-started.html">Getting started</a></li>
+        <li><a href="shapes-and-icons.html">Shapes and icons</a></li>
+        <li><a href="large-systems.html" aria-current="page">Large systems</a></li>
+        <li><a href="explaining.html">Explaining a diagram</a></li>
+        <li><a href="presenting.html">Presenting</a></li>
+        <li><a href="theming.html">Theming</a></li>
+        <li><a href="exporting.html">Exporting</a></li>
+        <li><a href="use-cases.html">Use cases</a></li>
+        <li><a href="reference.html">Reference</a></li>
+    </ol>
+    <h2>Elsewhere</h2>
+    <ol>
+      <li><a href="../index.html">Landing page</a></li>
+      <li><a href="/">Open the app</a></li>
+      <li><a href="/?gallery">210 examples</a></li>
+      <li><a href="../demo/index.html">Watch the demo</a></li>
+    </ol>
+  </aside>
+  <main class="main">
+    <p class="eyebrow">Chapter 3</p>
+    <h1>Large systems</h1>
+    <p class="standfirst">
+      Past about thirty nodes a diagram stops being read and starts being
+      wallpaper. Four tools keep a big system legible without deleting anything
+      from it.
+    </p>
+
+    <h2>Collapse what you are not looking at</h2>
+    <p>
+      A subgraph can start collapsed. It becomes one node, and every edge that
+      crossed its boundary bundles into a single line carrying a count.
+    </p>
+<pre>%%mp: group data <i>collapsed</i></pre>
+    <figure>
+      <img src="images/collapsed.png" alt="A platform diagram with two subgraphs collapsed into single nodes" width="1280" height="780" loading="lazy">
+      <figcaption>Two groups collapsed. The ×4 on an edge means four connections were bundled.</figcaption>
+    </figure>
+
+    <p>Click a collapsed node, or a group title, to open it. <em>Expand all</em> in the canvas tools opens everything at once.</p>
+    <figure>
+      <img src="images/expanded.png" alt="The same diagram with every group expanded" width="1280" height="780" loading="lazy">
+      <figcaption>The same diagram opened up — same source, different reading level.</figcaption>
+    </figure>
+
+    <h2>Focus on a neighbourhood</h2>
+    <p>
+      Select a node and set a radius: everything more than <em>N</em> hops away
+      dims out. It answers "what does this actually touch" without deleting
+      anything.
+    </p>
+    <figure>
+      <img src="images/focus.png" alt="A large diagram with everything beyond two hops dimmed" width="1280" height="780" loading="lazy">
+      <figcaption>Focus mode on a sixty-service estate. The rest is still there, just quiet.</figcaption>
+    </figure>
+
+    <h2>Find a node by name</h2>
+    <p>
+      Type into <em>Find node</em> and matches outline as you type. Press
+      <kbd>Enter</kbd> to jump the viewport to the first one.
+    </p>
+    <figure>
+      <img src="images/find.png" alt="The find field with matching nodes outlined" width="1280" height="780" loading="lazy">
+      <figcaption>Matching on both the label and the id, so you can search either.</figcaption>
+    </figure>
+
+    <h2>Turn it sideways</h2>
+    <p>
+      The four arrows in the canvas tools flip the flow direction. It rewrites
+      your source rather than holding it as a setting, because it changes the
+      whole picture and belongs in the document:
+    </p>
+<pre>%%mp: layout <i>direction</i>=RIGHT</pre>
+    <p>Top-to-bottom suits decisions and state. Left-to-right suits pipelines and request paths. It is worth trying both before you settle.</p>
+
+    <div class="note">
+      <p><strong>It stays fast.</strong> Five hundred nodes lay out in under a tenth of a second, and past a threshold the renderer draws only what is on screen. If a diagram feels slow, it is almost always because it is too big to read — collapse something.</p>
+    </div>
+
+    <nav class="next">
+      <a class="back" href="shapes-and-icons.html"><span>Back to</span><b>Shapes and icons</b></a>
+      <a href="explaining.html"><span>Next</span><b>Explaining a diagram</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

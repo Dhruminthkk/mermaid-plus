@@ -1,0 +1,10 @@
+import { chromium } from '@playwright/test'
+const browser = await chromium.launch()
+const page = await browser.newPage({ viewport: { width: 1400, height: 1000 }, deviceScaleFactor: 1.5 })
+await page.goto('http://localhost:5173/?gallery&theme=slate-light')
+await page.waitForSelector('.mp-gallery-card')
+await page.evaluate(() => document.getElementById('sequence')?.scrollIntoView())
+await page.waitForTimeout(200)
+await page.screenshot({ path: process.argv[2] })
+console.log('cards:', await page.locator('.mp-gallery-card').count(), 'sections:', await page.locator('.mp-gallery-section').count())
+await browser.close()
