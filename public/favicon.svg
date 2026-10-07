@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- A diagram, not a letter: the silhouette of a parent fanning out to two
+       children stays legible at 16px where a wordmark turns to mush. The
+       artwork runs close to the edge of the tile for the same reason — inset
+       it any further and the nodes drop below a pixel or two at favicon size.
+       It carries its own dark tile so it holds against light and dark chrome. -->
+  <rect width="32" height="32" rx="7" fill="#0b0e16"/>
+  <path d="M16 12.5V16M8 19.5V16h16v3.5" fill="none" stroke="#38cfe0" stroke-opacity=".6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="10" y="3.5" width="12" height="9" rx="3" fill="#38cfe0"/>
+  <rect x="2.5" y="19.5" width="11" height="9" rx="3" fill="#38cfe0"/>
+  <rect x="18.5" y="19.5" width="11" height="9" rx="3" fill="#38cfe0"/>
+</svg>
